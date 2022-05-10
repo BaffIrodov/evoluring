@@ -53,20 +53,20 @@ public class Cell {
         this.actionMap.put(dnaFragment, cellActionName);
     }
 
-    public Cell generateChild(int squareSize){
+    public Cell generateChild(int squareSize) {
         Random rand = new Random();
         int rangeX = rand.nextInt(1, 3);
         int rangeY = rand.nextInt(1, 3);
-        int signForRangeX = rand.nextInt(1,2);
-        int signForRangeY = rand.nextInt(1,2);
-        if(signForRangeX == 2){
+        int signForRangeX = rand.nextInt(1, 2);
+        int signForRangeY = rand.nextInt(1, 2);
+        if (signForRangeX == 2) {
             rangeX = -rangeX;
         }
-        if(signForRangeY == 2){
+        if (signForRangeY == 2) {
             rangeY = -rangeY;
         }
         this.energy -= 100;
-        Cell newCell = new Cell(this.name, this.generationNumber++, 100, new Coordinates(this.coordinates.x + rangeX*squareSize, this.coordinates.y + rangeY*squareSize), new DNA(this.dnaGeneration(this.dna.dnaCode), 0), this.color);
+        Cell newCell = new Cell(this.name, this.generationNumber++, 100, new Coordinates(this.coordinates.x + rangeX * squareSize, this.coordinates.y + rangeY * squareSize), new DNA(this.dnaGeneration(this.dna.dnaCode), 0), this.color);
         newCell.parentCell = this;
         this.childCell = newCell;
         return newCell;
@@ -76,32 +76,40 @@ public class Cell {
         return this.energy < 0;
     }
 
-    public String dnaGeneration(String dnaCode){
+    public String dnaGeneration(String dnaCode) {
+        int countOfGenesToDeleting = 1;
         List<String> geneList = actionMap.keySet().stream().toList();
         String genesToAdding = "";
         Random rand = new Random();
-        int countOfGenes = rand.nextInt(1, 5);
-        for(int i = 0; i < countOfGenes; i++){
-            int nextGene = rand.nextInt(0, 8);
+        int countOfGenesToAdding = rand.nextInt(1, 5);
+        if (countOfGenesToAdding > 1) {
+            countOfGenesToDeleting = rand.nextInt(1, countOfGenesToAdding);
+        }
+        for (int i = 0; i < countOfGenesToAdding; i++) {
+            int nextGene = rand.nextInt(0, geneList.size());
             genesToAdding += geneList.get(nextGene);
         }
-        String beta = dnaCode + genesToAdding;
+        String genesAfterAdding = dnaCode + genesToAdding;
         String result = "";
-        int index = rand.nextInt(beta.length()-1);
-        char[] betaHelper = beta.toCharArray();
-        for(int i = 0; i < betaHelper.length; i++){
-            if(i != index){
-                result += betaHelper[i];
+        for (int j = 0; j < countOfGenesToDeleting; j++) {
+            result = "";
+            int index = rand.nextInt(genesAfterAdding.length() - 1);
+            char[] genesAfterAddingArray = genesAfterAdding.toCharArray();
+            for (int i = 0; i < genesAfterAddingArray.length; i++) {
+                if (i != index) {
+                    result += genesAfterAddingArray[i];
+                }
             }
+            genesAfterAdding = result;
         }
         return result;
     }
 
-    public int getAttack(){
+    public int getAttack() {
         return this.dna.dnaCode.length() - this.dna.dnaCode.replace("f", "").length();
     }
 
-    public int getDefence(){
+    public int getDefence() {
         return this.dna.dnaCode.length() - this.dna.dnaCode.replace("g", "").length();
     }
 }
