@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 public class Cell {
     public String name;
+    public Integer generationNumber;
     public Integer energy;
     public DNA dna;
     public Coordinates coordinates;
@@ -15,8 +16,9 @@ public class Cell {
     public Color color;
     public Map<String, CellActions.CellActionsNames> actionMap = new HashMap<>();
 
-    public Cell(String name, Integer energy, Coordinates coordinates, DNA dna, Color color) {
+    public Cell(String name, Integer generationNumber, Integer energy, Coordinates coordinates, DNA dna, Color color) {
         this.name = name;
+        this.generationNumber = generationNumber;
         this.energy = energy;
         this.coordinates = coordinates;
         this.dna = dna;
@@ -64,7 +66,7 @@ public class Cell {
             rangeY = -rangeY;
         }
         this.energy -= 100;
-        Cell newCell = new Cell(this.name, 100, new Coordinates(this.coordinates.x + rangeX*squareSize, this.coordinates.y + rangeY*squareSize), new DNA(this.dnaGeneration(this.dna.dnaCode), 0), this.color);
+        Cell newCell = new Cell(this.name, this.generationNumber++, 100, new Coordinates(this.coordinates.x + rangeX*squareSize, this.coordinates.y + rangeY*squareSize), new DNA(this.dnaGeneration(this.dna.dnaCode), 0), this.color);
         newCell.parentCell = this;
         this.childCell = newCell;
         return newCell;

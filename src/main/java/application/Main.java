@@ -214,11 +214,11 @@ public class Main extends Application {
     }
 
     public void cellAdding() {
-        cells.add(new Cell("first", 500, new Coordinates(100, 100), new DNA("o", 0), Color.RED));
+        cells.add(new Cell("first", 1, 500, new Coordinates(100, 100), new DNA("o", 0), Color.RED));
 //        cells.add(new Cell("second", 500, new Coordinates(400, 100), new DNA("aabbccdd", 0), Color.AQUA));
-        cells.add(new Cell("third", 500, new Coordinates(800, 100), new DNA("o", 0), Color.BLACK));
-        cells.add(new Cell("fourth", 500, new Coordinates(100, 800), new DNA("o", 0), Color.GREEN));
-        cells.add(new Cell("fifth", 500, new Coordinates(800, 800), new DNA("o", 0), Color.BLUE));
+        cells.add(new Cell("third", 1, 500, new Coordinates(800, 100), new DNA("o", 0), Color.BLACK));
+        cells.add(new Cell("fourth", 1, 500, new Coordinates(100, 800), new DNA("o", 0), Color.GREEN));
+        cells.add(new Cell("fifth", 1, 500, new Coordinates(800, 800), new DNA("o", 0), Color.BLUE));
     }
 
     public void freeFoodAdding() {
