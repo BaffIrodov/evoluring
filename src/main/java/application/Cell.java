@@ -64,7 +64,7 @@ public class Cell {
             rangeY = -rangeY;
         }
         this.energy -= 100;
-        Cell newCell = new Cell(this.name, 200, new Coordinates(this.coordinates.x + rangeX*squareSize, this.coordinates.y + rangeY*squareSize), new DNA(this.dnaGeneration(this.dna.dnaCode), 0), this.color);
+        Cell newCell = new Cell(this.name, 100, new Coordinates(this.coordinates.x + rangeX*squareSize, this.coordinates.y + rangeY*squareSize), new DNA(this.dnaGeneration(this.dna.dnaCode), 0), this.color);
         newCell.parentCell = this;
         this.childCell = newCell;
         return newCell;
