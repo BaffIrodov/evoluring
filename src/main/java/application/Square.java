@@ -5,6 +5,7 @@ import javafx.scene.paint.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class Square {
@@ -68,12 +69,12 @@ public class Square {
             Cell firstCell = (Cell) this.items.get(0);
             Cell secondCell = (Cell) this.items.get(1);
             if(!Objects.equals(firstCell.name, secondCell.name)) {
-                if (firstCell.getAttack() > secondCell.getDefence()) {
+                if (Optional.ofNullable(firstCell.attack).orElse(0) > Optional.ofNullable(secondCell.defence).orElse(0)) {
                     firstCell.energy += secondCell.energy;
                     this.removeObjectFromSquareItems(secondCell);
                     cells.remove(secondCell);
                 }
-                if (secondCell.getAttack() > firstCell.getDefence()) {
+                if (Optional.ofNullable(secondCell.attack).orElse(0) > Optional.ofNullable(firstCell.defence).orElse(0)) {
                     secondCell.energy += firstCell.energy;
                     this.removeObjectFromSquareItems(firstCell);
                     cells.remove(firstCell);

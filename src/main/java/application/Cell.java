@@ -10,6 +10,8 @@ public class Cell {
     public Integer generationNumber;
     public Integer energy;
     public DNA dna;
+    public Integer attack;
+    public Integer defence;
     public Coordinates coordinates;
     public Cell parentCell;
     public Cell childCell;
@@ -23,6 +25,7 @@ public class Cell {
         this.coordinates = coordinates;
         this.dna = dna;
         this.color = color;
+        getAttackAndDefenceLikeVariables();
         actionMapGenerate();
     }
 
@@ -105,11 +108,8 @@ public class Cell {
         return result;
     }
 
-    public int getAttack() {
-        return this.dna.dnaCode.length() - this.dna.dnaCode.replace("f", "").length();
-    }
-
-    public int getDefence() {
-        return this.dna.dnaCode.length() - this.dna.dnaCode.replace("g", "").length();
+    public void getAttackAndDefenceLikeVariables() {
+        this.attack = this.dna.dnaCode.length() - this.dna.dnaCode.replace("f", "").length();
+        this.defence = this.dna.dnaCode.length() - this.dna.dnaCode.replace("g", "").length();
     }
 }
