@@ -9,6 +9,7 @@ public class Cell {
     public String name;
     public Integer generationNumber;
     public Integer energy;
+    public Integer energyCost;
     public DNA dna;
     public Integer attack;
     public Integer defence;
@@ -111,5 +112,6 @@ public class Cell {
     public void getAttackAndDefenceLikeVariables() {
         this.attack = this.dna.dnaCode.length() - this.dna.dnaCode.replace("f", "").length();
         this.defence = this.dna.dnaCode.length() - this.dna.dnaCode.replace("g", "").length();
+        this.energyCost = this.attack * 1 + this.defence * 1;
     }
 }
