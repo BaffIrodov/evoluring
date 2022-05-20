@@ -18,6 +18,7 @@ public class Cell {
     public Cell childCell;
     public Color color;
     public Map<String, CellActions.CellActionsNames> actionMap = new HashMap<>();
+    BoardSettings boardSettings = new BoardSettings();
 
     public Cell(String name, Integer generationNumber, Integer energy, Coordinates coordinates, DNA dna, Color color) {
         this.name = name;
@@ -113,5 +114,45 @@ public class Cell {
         this.attack = this.dna.dnaCode.length() - this.dna.dnaCode.replace("f", "").length();
         this.defence = this.dna.dnaCode.length() - this.dna.dnaCode.replace("g", "").length();
         this.energyCost = this.attack * 1 + this.defence * 1;
+    }
+
+    public Square getDimensionSquare(String dimension){
+        int coordinateX = 0;
+        int coordinateY = 0;
+        Square result = null;
+        switch (dimension){
+            case "right" -> {
+                coordinateX = this.coordinates.x + boardSettings.getSquareSize();
+                coordinateY = this.coordinates.y;
+                coordinateX = validateX(coordinateX)/boardSettings.getSquareSize();
+                coordinateY = validateY(coordinateY)/boardSettings.getSquareSize();
+                result = Main.squares.get(Main.mapSquareCoordinatesToIndex.get((String.valueOf(coordinateX)) + "|" + (String.valueOf(coordinateY))));
+            }
+        }
+        return result;
+    }
+
+    public int validateX(int x){
+        int width = boardSettings.getWidth();
+        int squareSize = boardSettings.getSquareSize();
+        if(x < 0){
+            x = (width-1)*(squareSize);
+        }
+        if(x >= width*squareSize){
+            x = 0;
+        }
+        return x;
+    }
+
+    public int validateY(int y){
+        int height = boardSettings.getHeight();
+        int squareSize = boardSettings.getSquareSize();
+        if(y < 0){
+            y = (height-1)*(squareSize);
+        }
+        if(y >= height*squareSize){
+            y = 0;
+        }
+        return y;
     }
 }

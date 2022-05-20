@@ -1,5 +1,6 @@
 package application;
 
+import java.time.LocalDate;
 import java.util.*;
 
 import javafx.animation.AnimationTimer;
@@ -20,7 +21,7 @@ public class Main extends Application {
     static List<Cell> cells = new ArrayList<>();
     //    static List<Corner> foods = new ArrayList<>();
     static List<Square> squares = new ArrayList<>();
-    Map<String, Integer> mapSquareCoordinatesToIndex = new HashMap<>();
+    static Map<String, Integer> mapSquareCoordinatesToIndex = new HashMap<>();
     static Map<Map<Integer, Integer>, Integer> foodsMap = new HashMap<>();
     static Dir direction = Dir.left;
     static boolean gameOver = false;
@@ -118,6 +119,7 @@ public class Main extends Application {
         }
 
         if (!gameStoped) {
+            Long now = System.currentTimeMillis();
             // fill
             // background
             graphicsContext.setFill(Color.BLACK);
@@ -129,15 +131,27 @@ public class Main extends Application {
             graphicsContext.fillText("Score: ", 10, 30);
 
             if (isFoodAdding) {
-                freeFoodAdding();
-                closeFoodAdding();
+                for (int i = 0; i < 50; i++) {
+                    freeFoodAdding();
+                    closeFoodAdding();
+                }
             }
 
             for (Square square : squares) { //отрисовка квадратиков
                 graphicsContext.setFill(Color.color(square.color.getRed(), square.color.getGreen(), square.color.getBlue()));
                 graphicsContext.fillRect(square.coordinates.x, square.coordinates.y, boardSettings.getSquareSize(), boardSettings.getSquareSize());
             }
+            Integer red = 0;
+            Integer black = 0;
+            Integer green = 0;
+            Integer blue = 0;
             for (Cell cell : cells) {
+                switch (cell.name){
+                    case "red" -> red++;
+                    case "black" -> black++;
+                    case "green" -> green++;
+                    case "blue" -> blue++;
+                }
                 boolean isDeath = cell.checkIfDeath();
                 Square currentSquare = getCurrentSquare(cell);
                 if (cell.energy > 300) {
@@ -150,28 +164,68 @@ public class Main extends Application {
                             cellActions.onDoNothing();
                         }
                         case MOVE_LEFT -> {
-                            currentSquare.removeObjectFromSquareItems(cell);
+//                            currentSquare.removeObjectFromSquareItems(cell);
                             cellActions.onMoveLeft(cell);
-                            currentSquare = getCurrentSquare(cell);
-                            currentSquare.addObjectToSquareItems(cell);
+                            Square tempSquare = getCurrentSquare(cell);
+                            if(tempSquare.items.stream().anyMatch(e -> {
+                                return ((Cell) e).name.equals(cell.name);
+                            })){
+                                cellActions.onMoveRight(cell);
+                            }
+                            else{
+                                currentSquare.removeObjectFromSquareItems(cell);
+                                tempSquare.addObjectToSquareItems(cell);
+                            }
+//                            currentSquare = getCurrentSquare(cell);
+//                            currentSquare.addObjectToSquareItems(cell);
                         }
                         case MOVE_RIGHT -> {
-                            currentSquare.removeObjectFromSquareItems(cell);
+//                            currentSquare.removeObjectFromSquareItems(cell);
                             cellActions.onMoveRight(cell);
-                            currentSquare = getCurrentSquare(cell);
-                            currentSquare.addObjectToSquareItems(cell);
+                            Square tempSquare = getCurrentSquare(cell);
+                            if(tempSquare.items.stream().anyMatch(e -> {
+                                return ((Cell) e).name.equals(cell.name);
+                            })){
+                                cellActions.onMoveLeft(cell);
+                            }
+                            else{
+                                currentSquare.removeObjectFromSquareItems(cell);
+                                tempSquare.addObjectToSquareItems(cell);
+                            }
+//                            currentSquare = getCurrentSquare(cell);
+//                            currentSquare.addObjectToSquareItems(cell);
                         }
                         case MOVE_DOWN -> {
-                            currentSquare.removeObjectFromSquareItems(cell);
+//                            currentSquare.removeObjectFromSquareItems(cell);
                             cellActions.onMoveDown(cell);
-                            currentSquare = getCurrentSquare(cell);
-                            currentSquare.addObjectToSquareItems(cell);
+                            Square tempSquare = getCurrentSquare(cell);
+                            if(tempSquare.items.stream().anyMatch(e -> {
+                                return ((Cell) e).name.equals(cell.name);
+                            })){
+                                cellActions.onMoveUp(cell);
+                            }
+                            else{
+                                currentSquare.removeObjectFromSquareItems(cell);
+                                tempSquare.addObjectToSquareItems(cell);
+                            }
+//                            currentSquare = getCurrentSquare(cell);
+//                            currentSquare.addObjectToSquareItems(cell);
                         }
                         case MOVE_UP -> {
-                            currentSquare.removeObjectFromSquareItems(cell);
+//                            currentSquare.removeObjectFromSquareItems(cell);
                             cellActions.onMoveUp(cell);
-                            currentSquare = getCurrentSquare(cell);
-                            currentSquare.addObjectToSquareItems(cell);
+                            Square tempSquare = getCurrentSquare(cell);
+                            if(tempSquare.items.stream().anyMatch(e -> {
+                                return ((Cell) e).name.equals(cell.name);
+                            })){
+                                cellActions.onMoveDown(cell);
+                            }
+                            else{
+                                currentSquare.removeObjectFromSquareItems(cell);
+                                tempSquare.addObjectToSquareItems(cell);
+                            }
+//                            currentSquare = getCurrentSquare(cell);
+//                            currentSquare.addObjectToSquareItems(cell);
                         }
                         case EAT_CLOSE_FOOD -> {
                             currentSquare = getCurrentSquare(cell);
@@ -180,7 +234,7 @@ public class Main extends Application {
                     }
                     graphicsContext.setFill(cell.color);
                     graphicsContext.fillOval(cell.coordinates.x, cell.coordinates.y, boardSettings.getSquareSize() - 1, boardSettings.getSquareSize() - 1);
-                    cell.energy -= cell.energyCost;
+//                    cell.energy -= cell.energyCost;
                     cell.energy--;
                 } else {
                     cellsToDelete.add(cell);
@@ -201,6 +255,11 @@ public class Main extends Application {
                     square.calculateEating(cells);
                 }
             }
+            System.out.print(System.currentTimeMillis() - now);
+            System.out.print("\n" + "red: " + red.toString() + "|" +
+                    "black: " + black.toString() + "|" +
+                    "green: " + green.toString() + "|" +
+                    "blue: " + blue.toString() + "|" + "\n");
         }
     }
 
@@ -216,11 +275,10 @@ public class Main extends Application {
     }
 
     public void cellAdding() {
-        cells.add(new Cell("first", 1, 500, new Coordinates(100, 100), new DNA("o", 0), Color.RED));
-//        cells.add(new Cell("second", 500, new Coordinates(400, 100), new DNA("aabbccdd", 0), Color.AQUA));
-        cells.add(new Cell("third", 1, 500, new Coordinates(800, 100), new DNA("o", 0), Color.BLACK));
-        cells.add(new Cell("fourth", 1, 500, new Coordinates(100, 800), new DNA("o", 0), Color.GREEN));
-        cells.add(new Cell("fifth", 1, 500, new Coordinates(800, 800), new DNA("o", 0), Color.BLUE));
+        cells.add(new Cell("red", 1, 500, new Coordinates(100, 100), new DNA("o", 0), Color.RED));
+        cells.add(new Cell("black", 1, 500, new Coordinates(800, 100), new DNA("o", 0), Color.BLACK));
+        cells.add(new Cell("green", 1, 500, new Coordinates(100, 800), new DNA("o", 0), Color.GREEN));
+        cells.add(new Cell("blue", 1, 500, new Coordinates(800, 800), new DNA("o", 0), Color.BLUE));
     }
 
     public void testFreeFoodInDistrict(){
