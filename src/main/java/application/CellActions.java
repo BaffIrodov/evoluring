@@ -1,7 +1,10 @@
 package application;
 
+import application.settingsDtos.CostSettings;
+
 public class CellActions {
     BoardSettings boardSettings = new BoardSettings();
+    CostSettings costSettings = boardSettings.getCostSetting();
     public enum CellActionsNames {
         DO_NOTHING,
         MOVE_LEFT,
@@ -17,32 +20,49 @@ public class CellActions {
         DEFENCE
     }
 
-    public void onDoNothing(){
-
+    public void onDoNothing(Cell cell){
+        if(costSettings.isConsiderActiveCost) {
+            cell.energy -= costSettings.doNothingActiveCost;
+        }
     }
 
     public void onMoveLeft(Cell cell){
         cell.coordinates.x = cell.coordinates.x - boardSettings.getSquareSize();
+        if(costSettings.isConsiderActiveCost) {
+            cell.energy -= costSettings.moveLeftActive;
+        }
         teleportCell(cell);
     }
 
     public void onMoveRight(Cell cell) {
         cell.coordinates.x += boardSettings.getSquareSize();
+        if(costSettings.isConsiderActiveCost) {
+            cell.energy -= costSettings.moveRightActive;
+        }
         teleportCell(cell);
     }
 
     public void onMoveUp(Cell cell){
         cell.coordinates.y -= boardSettings.getSquareSize();
+        if(costSettings.isConsiderActiveCost) {
+            cell.energy -= costSettings.moveUpActive;
+        }
         teleportCell(cell);
     }
 
     public void onMoveDown(Cell cell){
         cell.coordinates.y += boardSettings.getSquareSize();
+        if(costSettings.isConsiderActiveCost) {
+            cell.energy -= costSettings.moveDownActive;
+        }
         teleportCell(cell);
     }
 
     public void onEatCloseFood(Cell cell, Square square){
         cell.energy += square.closeFood;
+        if(costSettings.isConsiderActiveCost) {
+            cell.energy -= costSettings.eatCloseFoodActive;
+        }
         square.closeFood = 0;
         square.calculateColor(true);
     }

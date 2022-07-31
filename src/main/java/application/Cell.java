@@ -1,5 +1,6 @@
 package application;
 
+import application.settingsDtos.CostSettings;
 import javafx.scene.paint.Color;
 
 import java.util.*;
@@ -19,6 +20,7 @@ public class Cell {
     public Color color;
     public Map<String, CellActions.CellActionsNames> actionMap = new HashMap<>();
     BoardSettings boardSettings = new BoardSettings();
+    CostSettings costSettings = boardSettings.getCostSetting();
 
     public Cell(String name, Integer generationNumber, Integer energy, Coordinates coordinates, DNA dna, Color color) {
         this.name = name;
@@ -27,7 +29,7 @@ public class Cell {
         this.coordinates = coordinates;
         this.dna = dna;
         this.color = color;
-        getAttackAndDefenceLikeVariables();
+        getCountDnaGenesByTypeAndEnergyCost();
         actionMapGenerate();
     }
 
@@ -110,10 +112,23 @@ public class Cell {
         return result;
     }
 
-    public void getAttackAndDefenceLikeVariables() {
+    public void getCountDnaGenesByTypeAndEnergyCost() { //плата за сложность днк
         this.attack = this.dna.dnaCode.length() - this.dna.dnaCode.replace("f", "").length();
         this.defence = this.dna.dnaCode.length() - this.dna.dnaCode.replace("g", "").length();
-        this.energyCost = this.attack * 1 + this.defence * 1;
+        int doNothingLength = this.dna.dnaCode.length() - this.dna.dnaCode.replace("o", "").length();
+        int moveLeftLength = this.dna.dnaCode.length() - this.dna.dnaCode.replace("a", "").length();
+        int moveRightLength = this.dna.dnaCode.length() - this.dna.dnaCode.replace("b", "").length();
+        int moveUpLength = this.dna.dnaCode.length() - this.dna.dnaCode.replace("c", "").length();
+        int moveDownLength = this.dna.dnaCode.length() - this.dna.dnaCode.replace("d", "").length();
+        int eatCloseLength = this.dna.dnaCode.length() - this.dna.dnaCode.replace("e", "").length();
+        this.energyCost = this.attack * costSettings.attackPassiveCost
+                + this.defence * costSettings.defencePassiveCost
+                + doNothingLength * costSettings.doNothingPassiveCost
+                + moveLeftLength * costSettings.moveLeftPassive
+                + moveRightLength * costSettings.moveRightPassive
+                + moveUpLength * costSettings.moveUpPassive
+                + moveDownLength * costSettings.moveDownPassive
+                + eatCloseLength * costSettings.eatCloseFoodPassive;
     }
 
     public Square getDimensionSquare(String dimension){

@@ -3,6 +3,8 @@ package application;
 import java.time.LocalDate;
 import java.util.*;
 
+import application.settingsDtos.CostSettings;
+import application.settingsDtos.FoodAddingSettings;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -17,6 +19,8 @@ import javafx.scene.text.Font;
 
 public class Main extends Application {
     BoardSettings boardSettings = new BoardSettings();
+    CostSettings costSettings = boardSettings.getCostSetting();
+    FoodAddingSettings foodAddingSettings = boardSettings.getFoodAddingSettings();
     CellActions cellActions = new CellActions();
     static List<Cell> cells = new ArrayList<>();
     //    static List<Corner> foods = new ArrayList<>();
@@ -102,7 +106,7 @@ public class Main extends Application {
             //If you do not want to use css style, you can just delete the next line.
             scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
             primaryStage.setScene(scene);
-            primaryStage.setTitle("SNAKE GAME");
+            primaryStage.setTitle("EVOLURING");
             primaryStage.show();
         } catch (Exception e) {
             e.printStackTrace();
@@ -131,7 +135,7 @@ public class Main extends Application {
             graphicsContext.fillText("Score: ", 10, 30);
 
             if (isFoodAdding) {
-                for (int i = 0; i < 50; i++) {
+                for (int i = 0; i < 4; i++) {
                     freeFoodAdding();
                     closeFoodAdding();
                 }
@@ -161,7 +165,7 @@ public class Main extends Application {
                     CellActions.CellActionsNames nextAction = cell.getNextAction();
                     switch (nextAction) {
                         case DO_NOTHING -> {
-                            cellActions.onDoNothing();
+                            cellActions.onDoNothing(cell);
                         }
                         case MOVE_LEFT -> {
 //                            currentSquare.removeObjectFromSquareItems(cell);
@@ -234,11 +238,13 @@ public class Main extends Application {
                     }
                     graphicsContext.setFill(cell.color);
                     graphicsContext.fillOval(cell.coordinates.x, cell.coordinates.y, boardSettings.getSquareSize() - 1, boardSettings.getSquareSize() - 1);
-//                    cell.energy -= cell.energyCost;
+                    if(costSettings.isConsiderPassiveCost){
+                        cell.energy -= cell.energyCost;
+                    }
                     cell.energy--;
                 } else {
                     cellsToDelete.add(cell);
-                    currentSquare.freeFood += 100;
+                    currentSquare.freeFood += foodAddingSettings.freeEatAddingByDeath;
                     currentSquare.calculateColor(true);
                 }
             }
@@ -282,29 +288,31 @@ public class Main extends Application {
     }
 
     public void testFreeFoodInDistrict(){
-//        for(Square square : squares){
-//            if(square.coordinates.x >= 430 && square.coordinates.x <= 470 && square.coordinates.y >= 430 && square.coordinates.y <= 470){
-//                square.freeFood += 100;
-//            }
-//        }
+        for(Square square : squares){
+            if(square.coordinates.x >= 100 && square.coordinates.x <= 200 && square.coordinates.y >= 100 && square.coordinates.y <= 200){
+                square.freeFood += 100;
+                square.calculateColor(true);
+            }
+        }
+
     }
 
     public void freeFoodAdding() {
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < foodAddingSettings.freeFoodAddingRate; i++) {
             int randomSquareIndex = rand.nextInt(squares.size() - 1);
             Square randomSquare = squares.get(randomSquareIndex);
             randomSquare.freeFoodOnLastFrame = randomSquare.freeFood;
-            randomSquare.freeFood += 100;
+            randomSquare.freeFood += foodAddingSettings.freeEatAddingByEveryTick;
             randomSquare.calculateColor(false);
         }
     }
 
     public void closeFoodAdding() {
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < foodAddingSettings.closeFoodAddingRate; i++) {
             int randomSquareIndex = rand.nextInt(squares.size() - 1);
             Square randomSquare = squares.get(randomSquareIndex);
             randomSquare.closeFoodOnLastFrame = randomSquare.closeFood;
-            randomSquare.closeFood += 100;
+            randomSquare.closeFood += foodAddingSettings.closeEatAddingByEveryTick;
             randomSquare.calculateColor(false);
         }
     }
