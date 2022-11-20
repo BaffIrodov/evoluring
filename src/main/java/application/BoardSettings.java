@@ -4,15 +4,15 @@ import application.settingsDtos.CostSettings;
 import application.settingsDtos.FoodAddingSettings;
 
 public class BoardSettings {
-    private int width = 300; //считается не в чистых координатах, а в квадратиках
-    private int height = 200; //считается не в чистых координатах, а в квадратиках
-    private int squareSize = 3;
+    private int width = 150; //считается не в чистых координатах, а в квадратиках
+    private int height = 100; //считается не в чистых координатах, а в квадратиках
+    private int squareSize = 6;
 
     // energy cost settings
     // passive - в этом случае учитывается днк-код, и клетка платит за каждый фрагмент в коде
     // active - в этом случае учитывается только последствие применения способности
-    private boolean isConsiderActiveCost = false; // учитывать ли стоимость действий
-    private boolean isConsiderPassiveCost = true; // учитывать ли стоимость действий
+    private boolean isConsiderActiveCost = true; // учитывать ли стоимость действий
+    private boolean isConsiderPassiveCost = false; // учитывать ли стоимость действий
     private int attackPassiveCost = 4;
     private int attackActiveCost = 0;
     private int defencePassiveCost = 4;
@@ -32,10 +32,10 @@ public class BoardSettings {
 
     // food adding settings
     // добавление энергии на клетку в течении хода, добавление "трупа" после смерти, частота
-    private int freeFoodAddingRate = 5; // в тик на карте появляются столько квадратов free-еды
-    private int closeFoodAddingRate = 5; // в тик на карте появляются столько квадратов close-еды
-    private int freeEatAddingByEveryTick = 300; // количество добавляемой free-энергии за тик
-    private int closeEatAddingByEveryTick = 300; // количество добавляемой close-энергии за тик
+    private int freeFoodAddingRate = 25; // в тик на карте появляются столько квадратов free-еды
+    private int closeFoodAddingRate = 25; // в тик на карте появляются столько квадратов close-еды
+    private int freeEatAddingByEveryTick = 20; // количество добавляемой free-энергии за тик
+    private int closeEatAddingByEveryTick = 20; // количество добавляемой close-энергии за тик
     private int freeEatAddingByDeath = 100; // количество free-энергии от "трупа" клетки
 
     public int getHeight() {
