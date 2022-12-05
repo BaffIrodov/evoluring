@@ -17,7 +17,12 @@ public class CellActions {
         EAT_CLOSE_FOOD,
         DNACHANGE,
         ATTACK,
-        DEFENCE
+        DEFENCE,
+        GENERATE_CHILD
+    }
+
+    public Cell onGenerateChild(Cell cell) {
+        return cell.generateChild(this.boardSettings.getSquareSize());
     }
 
     public void onDoNothing(Cell cell){

@@ -126,7 +126,7 @@ public class Main extends Application {
     public void tick(GraphicsContext graphicsContext) {
         currentTick++;
         if (currentTick % 100 == 0) {
-            testFreeFoodInDistrict();
+            //testFreeFoodInDistrict();
         }
         if (currentTick % 100 == 0) {
 //            isFoodAdding = !isFoodAdding;
@@ -178,12 +178,15 @@ public class Main extends Application {
                 }
                 boolean isDeath = cell.checkIfDeath();
                 Square currentSquare = getCurrentSquare(cell);
-                if (cell.energy > 300) {
-                    cellsToAdding.add(cell.generateChild(boardSettings.getSquareSize()));
-                }
+//                if (cell.energy > 300) {
+//                    cellsToAdding.add(cell.generateChild(boardSettings.getSquareSize()));
+//                }
                 if (!isDeath) {
                     CellActions.CellActionsNames nextAction = cell.getNextAction();
                     switch (nextAction) {
+                        case GENERATE_CHILD -> {
+                            cellsToAdding.add(cellActions.onGenerateChild(cell));
+                        }
                         case DO_NOTHING -> {
                             cellActions.onDoNothing(cell);
                         }
@@ -297,10 +300,10 @@ public class Main extends Application {
     }
 
     public void cellAdding() {
-        cells.add(new Cell("red", 1, 500, new Coordinates(150, 150), new DNA("o", 0), Color.RED));
-        cells.add(new Cell("black", 1, 500, new Coordinates(450, 150), new DNA("o", 0), Color.BLACK));
-        cells.add(new Cell("green", 1, 500, new Coordinates(150, 450), new DNA("o", 0), Color.GREEN));
-        cells.add(new Cell("blue", 1, 500, new Coordinates(450, 450), new DNA("o", 0), Color.BLUE));
+        cells.add(new Cell("red", 1, 500, new Coordinates(150, 150), new DNA("h", 0), Color.RED));
+        cells.add(new Cell("black", 1, 500, new Coordinates(450, 150), new DNA("h", 0), Color.BLACK));
+        cells.add(new Cell("green", 1, 500, new Coordinates(150, 450), new DNA("h", 0), Color.GREEN));
+        cells.add(new Cell("blue", 1, 500, new Coordinates(450, 450), new DNA("h", 0), Color.BLUE));
     }
 
     public void imbalanceAdding() {

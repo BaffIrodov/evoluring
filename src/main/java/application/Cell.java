@@ -42,6 +42,7 @@ public class Cell {
         this.actionMap.put("e", CellActions.CellActionsNames.EAT_CLOSE_FOOD);
         this.actionMap.put("f", CellActions.CellActionsNames.ATTACK);
         this.actionMap.put("g", CellActions.CellActionsNames.DEFENCE);
+        this.actionMap.put("h", CellActions.CellActionsNames.GENERATE_CHILD);
     }
 
     public CellActions.CellActionsNames getNextAction() {
@@ -72,8 +73,9 @@ public class Cell {
         if (signForRangeY == 2) {
             rangeY = -rangeY;
         }
-        this.energy -= 100;
-        Cell newCell = new Cell(this.name, this.generationNumber++, 100, new Coordinates(this.coordinates.x + rangeX * squareSize, this.coordinates.y + rangeY * squareSize), new DNA(this.dnaGeneration(this.dna.dnaCode), 0), this.color);
+//        this.energy -= 100;
+        this.energy -= this.energy/2;
+        Cell newCell = new Cell(this.name, this.generationNumber++, /*100*/this.energy/2, new Coordinates(this.coordinates.x + rangeX * squareSize, this.coordinates.y + rangeY * squareSize), new DNA(this.dnaGeneration(this.dna.dnaCode), 0), this.color);
         newCell.parentCell = this;
         this.childCell = newCell;
         return newCell;
@@ -108,6 +110,29 @@ public class Cell {
                 }
             }
             genesAfterAdding = result;
+        }
+        /*
+        for (int i = 0; i < countOfGenesToAdding; i++) {
+            int nextGene = rand.nextInt(0, geneList.size());
+            genesToAdding += geneList.get(nextGene);
+        }
+        String genesAfterAdding = dnaCode + genesToAdding;
+        String result = "";
+        Map<Integer, Boolean> deletedGenesInIndexMap = new HashMap<>();
+        for (int j = 0; j < countOfGenesToDeleting; j++) {
+            Integer index = rand.nextInt(genesAfterAdding.length() - 1);
+            deletedGenesInIndexMap.put(index, true);
+        }
+        result = "";
+        char[] genesAfterAddingArray = genesAfterAdding.toCharArray();
+        for(int i = 0; i < genesAfterAdding.length()-1; i++) {
+            if(deletedGenesInIndexMap.get(i) == null) {
+                result += genesAfterAddingArray[i];
+            }
+        }
+        */
+        if(result.length() > 30) {
+            result = result.substring(0, 30);
         }
         return result;
     }
