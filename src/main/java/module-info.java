@@ -7,4 +7,6 @@ module com.example.demo1 {
     exports com.example.demo1;
     exports application;
     opens application to javafx.fxml;
+    exports application.settings;
+    opens application.settings to javafx.fxml;
 }

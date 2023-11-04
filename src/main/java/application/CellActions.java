@@ -1,10 +1,14 @@
 package application;
 
-import application.settingsDtos.CostSettings;
+import application.settings.BoardSettings;
+import application.settings.EnergyCostSettings;
+import application.settings.GameSettings;
 
 public class CellActions {
-    BoardSettings boardSettings = new BoardSettings();
-    CostSettings costSettings = boardSettings.getCostSetting();
+
+    GameSettings gameSettings = new GameSettings();
+    BoardSettings boardSettings = gameSettings.getBoardSettings();
+    EnergyCostSettings energyCostSettings = gameSettings.getCostSetting();
     public enum CellActionsNames {
         DO_NOTHING,
         MOVE_LEFT,
@@ -26,47 +30,47 @@ public class CellActions {
     }
 
     public void onDoNothing(Cell cell){
-        if(costSettings.isConsiderActiveCost) {
-            cell.energy -= costSettings.doNothingActiveCost;
+        if(energyCostSettings.isConsiderActiveCost) {
+            cell.energy -= energyCostSettings.doNothingActiveCost;
         }
     }
 
     public void onMoveLeft(Cell cell){
         cell.coordinates.x = cell.coordinates.x - boardSettings.getSquareSize();
-        if(costSettings.isConsiderActiveCost) {
-            cell.energy -= costSettings.moveLeftActive;
+        if(energyCostSettings.isConsiderActiveCost) {
+            cell.energy -= energyCostSettings.moveLeftActive;
         }
         teleportCell(cell);
     }
 
     public void onMoveRight(Cell cell) {
         cell.coordinates.x += boardSettings.getSquareSize();
-        if(costSettings.isConsiderActiveCost) {
-            cell.energy -= costSettings.moveRightActive;
+        if(energyCostSettings.isConsiderActiveCost) {
+            cell.energy -= energyCostSettings.moveRightActive;
         }
         teleportCell(cell);
     }
 
     public void onMoveUp(Cell cell){
         cell.coordinates.y -= boardSettings.getSquareSize();
-        if(costSettings.isConsiderActiveCost) {
-            cell.energy -= costSettings.moveUpActive;
+        if(energyCostSettings.isConsiderActiveCost) {
+            cell.energy -= energyCostSettings.moveUpActive;
         }
         teleportCell(cell);
     }
 
     public void onMoveDown(Cell cell){
         cell.coordinates.y += boardSettings.getSquareSize();
-        if(costSettings.isConsiderActiveCost) {
-            cell.energy -= costSettings.moveDownActive;
+        if(energyCostSettings.isConsiderActiveCost) {
+            cell.energy -= energyCostSettings.moveDownActive;
         }
         teleportCell(cell);
     }
 
     public void onEatCloseFood(Cell cell, Square square){
         cell.energy += square.closeFood;
-        if(costSettings.isConsiderActiveCost) {
-            cell.energy -= costSettings.eatCloseFoodActive;
+        if(energyCostSettings.isConsiderActiveCost) {
+            cell.energy -= energyCostSettings.eatCloseFoodActive;
         }
         square.closeFood = 0;
         square.calculateColor(true);

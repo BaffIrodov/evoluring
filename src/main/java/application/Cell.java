@@ -1,10 +1,11 @@
 package application;
 
-import application.settingsDtos.CostSettings;
+import application.settings.BoardSettings;
+import application.settings.EnergyCostSettings;
+import application.settings.GameSettings;
 import javafx.scene.paint.Color;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Cell {
     public String name;
@@ -19,8 +20,10 @@ public class Cell {
     public Cell childCell;
     public Color color;
     public Map<String, CellActions.CellActionsNames> actionMap = new HashMap<>();
-    BoardSettings boardSettings = new BoardSettings();
-    CostSettings costSettings = boardSettings.getCostSetting();
+
+    GameSettings gameSettings = new GameSettings();
+    BoardSettings boardSettings = gameSettings.getBoardSettings();
+    EnergyCostSettings energyCostSettings = gameSettings.getCostSetting();
 
     public Cell(String name, Integer generationNumber, Integer energy, Coordinates coordinates, DNA dna, Color color) {
         this.name = name;
@@ -146,14 +149,14 @@ public class Cell {
         int moveUpLength = this.dna.dnaCode.length() - this.dna.dnaCode.replace("c", "").length();
         int moveDownLength = this.dna.dnaCode.length() - this.dna.dnaCode.replace("d", "").length();
         int eatCloseLength = this.dna.dnaCode.length() - this.dna.dnaCode.replace("e", "").length();
-        this.energyCost = this.attack * costSettings.attackPassiveCost
-                + this.defence * costSettings.defencePassiveCost
-                + doNothingLength * costSettings.doNothingPassiveCost
-                + moveLeftLength * costSettings.moveLeftPassive
-                + moveRightLength * costSettings.moveRightPassive
-                + moveUpLength * costSettings.moveUpPassive
-                + moveDownLength * costSettings.moveDownPassive
-                + eatCloseLength * costSettings.eatCloseFoodPassive;
+        this.energyCost = this.attack * energyCostSettings.attackPassiveCost
+                + this.defence * energyCostSettings.defencePassiveCost
+                + doNothingLength * energyCostSettings.doNothingPassiveCost
+                + moveLeftLength * energyCostSettings.moveLeftPassive
+                + moveRightLength * energyCostSettings.moveRightPassive
+                + moveUpLength * energyCostSettings.moveUpPassive
+                + moveDownLength * energyCostSettings.moveDownPassive
+                + eatCloseLength * energyCostSettings.eatCloseFoodPassive;
     }
 
     public Square getDimensionSquare(String dimension){

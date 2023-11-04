@@ -1,10 +1,8 @@
 package application;
 
-import java.time.LocalDate;
 import java.util.*;
 
-import application.settingsDtos.CostSettings;
-import application.settingsDtos.FoodAddingSettings;
+import application.settings.*;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -18,9 +16,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 public class Main extends Application {
-    BoardSettings boardSettings = new BoardSettings();
-    CostSettings costSettings = boardSettings.getCostSetting();
-    FoodAddingSettings foodAddingSettings = boardSettings.getFoodAddingSettings();
+
+    GameSettings gameSettings = new GameSettings();
+    BoardSettings boardSettings = gameSettings.getBoardSettings();
+    EnergyCostSettings energyCostSettings = gameSettings.getCostSetting();
+    FoodAddingSettings foodAddingSettings = gameSettings.getFoodAddingSettings();
+    CellGenerationSettings cellGenerationSettings = gameSettings.getCellGenerationSettings();
     CellActions cellActions = new CellActions();
     static List<Cell> cells = new ArrayList<>();
     //    static List<Corner> foods = new ArrayList<>();
@@ -81,6 +82,9 @@ public class Main extends Application {
                 if (key.getCode() == KeyCode.UP) {
                     cellAdding();
                 }
+                if (key.getCode() == KeyCode.W) {
+                    cellAdding2();
+                }
                 if (key.getCode() == KeyCode.LEFT) {
                     isFoodAdding = !isFoodAdding;
                 }
@@ -126,7 +130,8 @@ public class Main extends Application {
     public void tick(GraphicsContext graphicsContext) {
         currentTick++;
         if (currentTick % 100 == 0) {
-            //testFreeFoodInDistrict();
+            testFreeFoodInDistrict();
+            testCloseFoodInDistrict();
         }
         if (currentTick % 100 == 0) {
 //            isFoodAdding = !isFoodAdding;
@@ -178,14 +183,18 @@ public class Main extends Application {
                 }
                 boolean isDeath = cell.checkIfDeath();
                 Square currentSquare = getCurrentSquare(cell);
-//                if (cell.energy > 300) {
-//                    cellsToAdding.add(cell.generateChild(boardSettings.getSquareSize()));
-//                }
+                if (cellGenerationSettings.generateByFood) {
+                    if (cell.energy > cellGenerationSettings.costOfGenerationByFood) {
+                        cellsToAdding.add(cell.generateChild(boardSettings.getSquareSize()));
+                    }
+                }
                 if (!isDeath) {
                     CellActions.CellActionsNames nextAction = cell.getNextAction();
                     switch (nextAction) {
                         case GENERATE_CHILD -> {
-                            cellsToAdding.add(cellActions.onGenerateChild(cell));
+                            if (cellGenerationSettings.generateByGene) {
+                                cellsToAdding.add(cellActions.onGenerateChild(cell));
+                            }
                         }
                         case DO_NOTHING -> {
                             cellActions.onDoNothing(cell);
@@ -256,8 +265,8 @@ public class Main extends Application {
                         }
                     }
                     graphicsContext.setFill(cell.color);
-                    graphicsContext.fillOval(cell.coordinates.x, cell.coordinates.y, boardSettings.getSquareSize() - 1, boardSettings.getSquareSize() - 1);
-                    if (costSettings.isConsiderPassiveCost) {
+                    graphicsContext.fillRect(cell.coordinates.x, cell.coordinates.y, boardSettings.getSquareSize() /*- 1*/, boardSettings.getSquareSize() /*- 1*/);
+                    if (energyCostSettings.isConsiderPassiveCost) {
                         cell.energy -= cell.energyCost;
                     }
                     cell.energy--;
@@ -300,10 +309,17 @@ public class Main extends Application {
     }
 
     public void cellAdding() {
-        cells.add(new Cell("red", 1, 500, new Coordinates(150, 150), new DNA("h", 0), Color.RED));
-        cells.add(new Cell("black", 1, 500, new Coordinates(450, 150), new DNA("h", 0), Color.BLACK));
+        cells.add(new Cell("red", 1, 500, new Coordinates(150, 150), new DNA("abcdh", 0), Color.RED));
+        cells.add(new Cell("black", 1, 500, new Coordinates(450, 150), new DNA("abcdh", 0), Color.BLACK));
         cells.add(new Cell("green", 1, 500, new Coordinates(150, 450), new DNA("h", 0), Color.GREEN));
         cells.add(new Cell("blue", 1, 500, new Coordinates(450, 450), new DNA("h", 0), Color.BLUE));
+    }
+
+    public void cellAdding2() {
+//        cells.add(new Cell("red", 1, 500, new Coordinates(150, 150), new DNA("h", 0), Color.RED));
+//        cells.add(new Cell("black", 1, 500, new Coordinates(450, 150), new DNA("h", 0), Color.BLACK));
+        cells.add(new Cell("green", 1, 500, new Coordinates(150, 450), new DNA("abcdh", 0), Color.GREEN));
+        cells.add(new Cell("blue", 1, 500, new Coordinates(450, 450), new DNA("abcdh", 0), Color.BLUE));
     }
 
     public void imbalanceAdding() {
@@ -342,6 +358,16 @@ public class Main extends Application {
             }
             if (square.coordinates.x >= 140 && square.coordinates.x <= 160 && square.coordinates.y >= 200 && square.coordinates.y <= 400) {
                 square.freeFood += 100;
+                square.calculateColor(true);
+            }
+        }
+
+    }
+
+    public void testCloseFoodInDistrict() {
+        for (Square square : squares) {
+            if (square.coordinates.x >= 700 && square.coordinates.x <= 800) {
+                square.closeFood += 100;
                 square.calculateColor(true);
             }
         }

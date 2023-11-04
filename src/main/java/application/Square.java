@@ -51,13 +51,9 @@ public class Square {
             }
             this.color = Color.color((red / 1000), this.color.getGreen(), (blue / 1000));
         }
-        int wow = 0;
     }
 
     public void calculateEating(List<Cell> cells) { //тут сразу все методы - свободная еда, закрытая, сражения
-        if (this.freeFood != 0) {
-            int ok = 0;
-        }
         if (this.items.size() == 1) { //обсчитываем свободную или закрытую еду и всё
             Cell cell = (Cell) this.items.get(0);
             cell.energy += this.freeFood;
