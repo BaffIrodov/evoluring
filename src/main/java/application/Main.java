@@ -2,6 +2,8 @@ package application;
 
 import java.util.*;
 
+import application.keyController.Key;
+import application.keyController.KeyTitles;
 import application.settings.*;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -23,12 +25,11 @@ public class Main extends Application {
     FoodAddingSettings foodAddingSettings = gameSettings.getFoodAddingSettings();
     CellGenerationSettings cellGenerationSettings = gameSettings.getCellGenerationSettings();
     CellActions cellActions = new CellActions();
+    KeyTitles keyTitles = new KeyTitles();
     static List<Cell> cells = new ArrayList<>();
-    //    static List<Corner> foods = new ArrayList<>();
     static List<Square> squares = new ArrayList<>();
     static Map<String, Integer> mapSquareCoordinatesToIndex = new HashMap<>();
     static Map<Map<Integer, Integer>, Integer> foodsMap = new HashMap<>();
-    static Dir direction = Dir.left;
     static boolean gameOver = false;
     static boolean gameStoped = false;
     static Random rand = new Random();
@@ -41,10 +42,6 @@ public class Main extends Application {
 
     private int getRandPos(int number) {
         return new Random(number).nextInt();
-    }
-
-    public enum Dir {
-        left, right, up, down
     }
 
     public void start(Stage primaryStage) {
@@ -76,37 +73,33 @@ public class Main extends Application {
 
             // control
             scene.addEventFilter(KeyEvent.KEY_PRESSED, key -> {
-                if (key.getCode() == KeyCode.SPACE) {
-                    gameStoped = !gameStoped;
+                if (keyTitles.mapKeyByKeyCodes.containsKey(key.getCode())){
+                    if (key.getCode() == KeyCode.SPACE) {
+                        gameStoped = !gameStoped;
+                        if (gameStoped) {
+                            graphicsContext.setFill(Color.BLACK);
+                            graphicsContext.setFont(new Font("", 14));
+                            String globalDescription = "";
+                            for (Key currentKey : keyTitles.keyList) {
+                                globalDescription += currentKey.getName() + " - "
+                                        + currentKey.getDescription() + "\n";
+                            }
+                            graphicsContext.fillText(globalDescription, 30, 30);
+                        }
+                    }
+                    if (key.getCode() == KeyCode.UP) {
+                        cellAdding();
+                    }
+                    if (key.getCode() == KeyCode.LEFT) {
+                        isFoodAdding = !isFoodAdding;
+                    }
+                    if (key.getCode() == KeyCode.DOWN) {
+                        isOnlyCloseAdding = !isOnlyCloseAdding;
+                    }
+                    if (key.getCode() == KeyCode.RIGHT) {
+                        testFreeFoodInDistrict();
+                    }
                 }
-                if (key.getCode() == KeyCode.UP) {
-                    cellAdding();
-                }
-                if (key.getCode() == KeyCode.W) {
-                    cellAdding2();
-                }
-                if (key.getCode() == KeyCode.LEFT) {
-                    isFoodAdding = !isFoodAdding;
-                }
-                if (key.getCode() == KeyCode.DOWN) {
-                    isOnlyCloseAdding = !isOnlyCloseAdding;
-                }
-                if (key.getCode() == KeyCode.RIGHT) {
-                    testFreeFoodInDistrict();
-                }
-                if (key.getCode() == KeyCode.W) {
-                    direction = Dir.up;
-                }
-                if (key.getCode() == KeyCode.A) {
-                    direction = Dir.left;
-                }
-                if (key.getCode() == KeyCode.S) {
-                    direction = Dir.down;
-                }
-                if (key.getCode() == KeyCode.D) {
-                    direction = Dir.right;
-                }
-
             });
             // initialization playing field
             squareAdding();
@@ -130,8 +123,8 @@ public class Main extends Application {
     public void tick(GraphicsContext graphicsContext) {
         currentTick++;
         if (currentTick % 100 == 0) {
-            testFreeFoodInDistrict();
-            testCloseFoodInDistrict();
+//            testFreeFoodInDistrict();
+//            testCloseFoodInDistrict();
         }
         if (currentTick % 100 == 0) {
 //            isFoodAdding = !isFoodAdding;
@@ -313,17 +306,6 @@ public class Main extends Application {
         cells.add(new Cell("black", 1, 500, new Coordinates(450, 150), new DNA("abcdh", 0), Color.BLACK));
         cells.add(new Cell("green", 1, 500, new Coordinates(150, 450), new DNA("h", 0), Color.GREEN));
         cells.add(new Cell("blue", 1, 500, new Coordinates(450, 450), new DNA("h", 0), Color.BLUE));
-    }
-
-    public void cellAdding2() {
-//        cells.add(new Cell("red", 1, 500, new Coordinates(150, 150), new DNA("h", 0), Color.RED));
-//        cells.add(new Cell("black", 1, 500, new Coordinates(450, 150), new DNA("h", 0), Color.BLACK));
-        cells.add(new Cell("green", 1, 500, new Coordinates(150, 450), new DNA("abcdh", 0), Color.GREEN));
-        cells.add(new Cell("blue", 1, 500, new Coordinates(450, 450), new DNA("abcdh", 0), Color.BLUE));
-    }
-
-    public void imbalanceAdding() {
-        cells.add(new Cell("red", 1, 500, new Coordinates(100, 100), new DNA("afaffaffafffaffafffafffaf", 0), Color.RED));
     }
 
     public void testFreeFoodInDistrict() {
