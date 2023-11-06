@@ -43,6 +43,7 @@ public class Main extends Application {
     public boolean isOnlyCloseAdding = false;
     public int currentTick = 0;
     public long startGameMills = System.currentTimeMillis();
+    private int realFrameCount = 1;
 
     private int getRandPos(int number) {
         return new Random(number).nextInt();
@@ -57,6 +58,7 @@ public class Main extends Application {
 
             new AnimationTimer() {
                 long lastTick = 0;
+                int index = 0;
 
                 public void handle(long now) {
                     if (lastTick == 0) {
@@ -65,7 +67,7 @@ public class Main extends Application {
                         return;
                     }
 
-                    if (now - lastTick > 1) {
+                    if (now - lastTick > 0) {
                         lastTick = now;
                         tick(graphicsContext);
                     }
@@ -85,6 +87,18 @@ public class Main extends Application {
                 int i = 0;
             });
             scene.addEventFilter(KeyEvent.KEY_PRESSED, key -> {
+                if (key.getCode() == KeyCode.DIGIT1) {
+                    this.realFrameCount = 1;
+                    System.out.println(this.realFrameCount);
+                }
+                if (key.getCode() == KeyCode.DIGIT2) {
+                    this.realFrameCount = 10;
+                    System.out.println(this.realFrameCount);
+                }
+                if (key.getCode() == KeyCode.DIGIT3) {
+                    this.realFrameCount = 20;
+                    System.out.println(this.realFrameCount);
+                }
                 if (keyTitles.mapKeyByKeyCodes.containsKey(key.getCode())){
                     if (key.getCode() == KeyCode.SPACE) {
                         gameStoped = !gameStoped;
@@ -140,172 +154,159 @@ public class Main extends Application {
 
     // tick
     public void tick(GraphicsContext graphicsContext) {
-        currentTick++;
-        if (currentTick % 100 == 0) {
-//            testFreeFoodInDistrict();
-//            testCloseFoodInDistrict();
-        }
-        if (currentTick % 100 == 0) {
+        for (int i = 0; i < realFrameCount; i++) {
+            currentTick++;
+//        if (currentTick % 100 == 0) {
+////            testFreeFoodInDistrict();
+////            testCloseFoodInDistrict();
+//        }
+            if (currentTick % 100 == 0) {
 //            isFoodAdding = !isFoodAdding;
-            System.out.println(System.currentTimeMillis() - startGameMills);
-            startGameMills = System.currentTimeMillis();
-        }
-        if (gameOver) {
-            graphicsContext.setFill(Color.RED);
-            graphicsContext.setFont(new Font("", 50));
-            graphicsContext.fillText("GAME OVER", 100, 250);
-            return;
-        }
-
-        if (!gameStoped) {
-            Long now = System.currentTimeMillis();
-            // fill
-            // background
-            graphicsContext.setFill(Color.BLACK);
-            graphicsContext.fillRect(0, 0, boardSettings.getWidth() * boardSettings.getSquareSize(), boardSettings.getHeight() * boardSettings.getSquareSize());
-
-            // score
-            graphicsContext.setFill(Color.WHITE);
-            graphicsContext.setFont(new Font("", 30));
-            graphicsContext.fillText("Score: ", 10, 30);
-
-            if (isFoodAdding) {
-                freeFoodAdding();
-                closeFoodAdding();
+                System.out.println(System.currentTimeMillis() - startGameMills);
+                startGameMills = System.currentTimeMillis();
             }
 
-            if (isOnlyCloseAdding) {
-                closeFoodAdding();
-            }
+            if (!gameStoped) {
+                Long now = System.currentTimeMillis();
 
-            for (Square square : squares) { //отрисовка квадратиков
-                graphicsContext.setFill(Color.color(square.color.getRed(), square.color.getGreen(), square.color.getBlue()));
-                graphicsContext.fillRect(square.coordinates.x, square.coordinates.y, boardSettings.getSquareSize(), boardSettings.getSquareSize());
-            }
-            Integer red = 0;
-            Integer black = 0;
-            Integer green = 0;
-            Integer blue = 0;
-            for (Cell cell : cells) {
-                switch (cell.name) {
-                    case "red" -> red++;
-                    case "black" -> black++;
-                    case "green" -> green++;
-                    case "blue" -> blue++;
+                if (isFoodAdding) {
+                    freeFoodAdding();
+                    closeFoodAdding();
                 }
-                boolean isDeath = cell.checkIfDeath();
-                Square currentSquare = getCurrentSquare(cell);
-                if (cellGenerationSettings.generateByFood) {
-                    if (cell.energy > cellGenerationSettings.costOfGenerationByFood) {
-                        cellsToAdding.add(cell.generateChild(boardSettings.getSquareSize()));
+
+                if (isOnlyCloseAdding) {
+                    closeFoodAdding();
+                }
+
+                for (Square square : squares) { //отрисовка квадратиков
+                    graphicsContext.setFill(square.color);
+                    graphicsContext.fillRect(square.coordinates.x, square.coordinates.y, boardSettings.getSquareSize(), boardSettings.getSquareSize());
+                }
+                Integer red = 0;
+                Integer black = 0;
+                Integer green = 0;
+                Integer blue = 0;
+                for (Cell cell : cells) {
+                    switch (cell.name) {
+                        case "red" -> red++;
+                        case "black" -> black++;
+                        case "green" -> green++;
+                        case "blue" -> blue++;
                     }
-                }
-                if (!isDeath) {
-                    CellActions.CellActionsNames nextAction = cell.getNextAction();
-                    switch (nextAction) {
-                        case GENERATE_CHILD -> {
-                            if (cellGenerationSettings.generateByGene) {
-                                cellsToAdding.add(cellActions.onGenerateChild(cell));
+                    boolean isDeath = cell.checkIfDeath();
+                    Square currentSquare = getCurrentSquare(cell);
+                    if (cellGenerationSettings.generateByFood) {
+                        if (cell.energy > cellGenerationSettings.costOfGenerationByFood) {
+                            cellsToAdding.add(cell.generateChild(boardSettings.getSquareSize()));
+                        }
+                    }
+                    if (!isDeath) {
+                        CellActions.CellActionsNames nextAction = cell.getNextAction();
+                        switch (nextAction) {
+                            case GENERATE_CHILD -> {
+                                if (cellGenerationSettings.generateByGene) {
+                                    cellsToAdding.add(cellActions.onGenerateChild(cell));
+                                }
                             }
-                        }
-                        case DO_NOTHING -> {
-                            cellActions.onDoNothing(cell);
-                        }
-                        case MOVE_LEFT -> {
-//                            currentSquare.removeObjectFromSquareItems(cell);
-                            cellActions.onMoveLeft(cell);
-                            Square tempSquare = getCurrentSquare(cell);
-                            if (tempSquare.items.stream().anyMatch(e -> {
-                                return ((Cell) e).name.equals(cell.name);
-                            })) {
-                                cellActions.onMoveRight(cell);
-                            } else {
-                                currentSquare.removeObjectFromSquareItems(cell);
-                                tempSquare.addObjectToSquareItems(cell);
+                            case DO_NOTHING -> {
+                                cellActions.onDoNothing(cell);
                             }
-//                            currentSquare = getCurrentSquare(cell);
-//                            currentSquare.addObjectToSquareItems(cell);
-                        }
-                        case MOVE_RIGHT -> {
+                            case MOVE_LEFT -> {
 //                            currentSquare.removeObjectFromSquareItems(cell);
-                            cellActions.onMoveRight(cell);
-                            Square tempSquare = getCurrentSquare(cell);
-                            if (tempSquare.items.stream().anyMatch(e -> {
-                                return ((Cell) e).name.equals(cell.name);
-                            })) {
                                 cellActions.onMoveLeft(cell);
-                            } else {
-                                currentSquare.removeObjectFromSquareItems(cell);
-                                tempSquare.addObjectToSquareItems(cell);
-                            }
+                                Square tempSquare = getCurrentSquare(cell);
+                                if (tempSquare.items.stream().anyMatch(e -> {
+                                    return ((Cell) e).name.equals(cell.name);
+                                })) {
+                                    cellActions.onMoveRight(cell);
+                                } else {
+                                    currentSquare.removeObjectFromSquareItems(cell);
+                                    tempSquare.addObjectToSquareItems(cell);
+                                }
 //                            currentSquare = getCurrentSquare(cell);
 //                            currentSquare.addObjectToSquareItems(cell);
-                        }
-                        case MOVE_DOWN -> {
-//                            currentSquare.removeObjectFromSquareItems(cell);
-                            cellActions.onMoveDown(cell);
-                            Square tempSquare = getCurrentSquare(cell);
-                            if (tempSquare.items.stream().anyMatch(e -> {
-                                return ((Cell) e).name.equals(cell.name);
-                            })) {
-                                cellActions.onMoveUp(cell);
-                            } else {
-                                currentSquare.removeObjectFromSquareItems(cell);
-                                tempSquare.addObjectToSquareItems(cell);
                             }
+                            case MOVE_RIGHT -> {
+//                            currentSquare.removeObjectFromSquareItems(cell);
+                                cellActions.onMoveRight(cell);
+                                Square tempSquare = getCurrentSquare(cell);
+                                if (tempSquare.items.stream().anyMatch(e -> {
+                                    return ((Cell) e).name.equals(cell.name);
+                                })) {
+                                    cellActions.onMoveLeft(cell);
+                                } else {
+                                    currentSquare.removeObjectFromSquareItems(cell);
+                                    tempSquare.addObjectToSquareItems(cell);
+                                }
 //                            currentSquare = getCurrentSquare(cell);
 //                            currentSquare.addObjectToSquareItems(cell);
-                        }
-                        case MOVE_UP -> {
+                            }
+                            case MOVE_DOWN -> {
 //                            currentSquare.removeObjectFromSquareItems(cell);
-                            cellActions.onMoveUp(cell);
-                            Square tempSquare = getCurrentSquare(cell);
-                            if (tempSquare.items.stream().anyMatch(e -> {
-                                return ((Cell) e).name.equals(cell.name);
-                            })) {
                                 cellActions.onMoveDown(cell);
-                            } else {
-                                currentSquare.removeObjectFromSquareItems(cell);
-                                tempSquare.addObjectToSquareItems(cell);
-                            }
+                                Square tempSquare = getCurrentSquare(cell);
+                                if (tempSquare.items.stream().anyMatch(e -> {
+                                    return ((Cell) e).name.equals(cell.name);
+                                })) {
+                                    cellActions.onMoveUp(cell);
+                                } else {
+                                    currentSquare.removeObjectFromSquareItems(cell);
+                                    tempSquare.addObjectToSquareItems(cell);
+                                }
 //                            currentSquare = getCurrentSquare(cell);
 //                            currentSquare.addObjectToSquareItems(cell);
+                            }
+                            case MOVE_UP -> {
+//                            currentSquare.removeObjectFromSquareItems(cell);
+                                cellActions.onMoveUp(cell);
+                                Square tempSquare = getCurrentSquare(cell);
+                                if (tempSquare.items.stream().anyMatch(e -> {
+                                    return ((Cell) e).name.equals(cell.name);
+                                })) {
+                                    cellActions.onMoveDown(cell);
+                                } else {
+                                    currentSquare.removeObjectFromSquareItems(cell);
+                                    tempSquare.addObjectToSquareItems(cell);
+                                }
+//                            currentSquare = getCurrentSquare(cell);
+//                            currentSquare.addObjectToSquareItems(cell);
+                            }
+                            case EAT_CLOSE_FOOD -> {
+                                currentSquare = getCurrentSquare(cell);
+                                cellActions.onEatCloseFood(cell, currentSquare);
+                            }
                         }
-                        case EAT_CLOSE_FOOD -> {
-                            currentSquare = getCurrentSquare(cell);
-                            cellActions.onEatCloseFood(cell, currentSquare);
+                        graphicsContext.setFill(cell.color);
+                        graphicsContext.fillRect(cell.coordinates.x, cell.coordinates.y, boardSettings.getSquareSize() /*- 1*/, boardSettings.getSquareSize() /*- 1*/);
+                        if (energyCostSettings.isConsiderPassiveCost) {
+                            cell.energy -= cell.energyCost;
                         }
-                    }
-                    graphicsContext.setFill(cell.color);
-                    graphicsContext.fillRect(cell.coordinates.x, cell.coordinates.y, boardSettings.getSquareSize() /*- 1*/, boardSettings.getSquareSize() /*- 1*/);
-                    if (energyCostSettings.isConsiderPassiveCost) {
-                        cell.energy -= cell.energyCost;
-                    }
-                    cell.energy--;
-                } else {
-                    cellsToDelete.add(cell);
+                        cell.energy--;
+                    } else {
+                        cellsToDelete.add(cell);
 //                    currentSquare.freeFood += foodAddingSettings.freeEatAddingByDeath;
 //                    currentSquare.calculateColor(true);
+                    }
                 }
-            }
-            if (!cellsToDelete.isEmpty()) {
-                cellsToDelete.forEach(e -> cells.remove(e));
-                cellsToDelete = new ArrayList<>();
-            }
-            if (!cellsToAdding.isEmpty()) {
-                cells.addAll(cellsToAdding);
-                cellsToAdding = new ArrayList<>();
-            }
-            for (Square square : squares) {
-                if (!square.items.isEmpty()) {
-                    square.calculateEating(cells);
+                if (!cellsToDelete.isEmpty()) {
+                    cellsToDelete.forEach(e -> cells.remove(e));
+                    cellsToDelete = new ArrayList<>();
                 }
-            }
+                if (!cellsToAdding.isEmpty()) {
+                    cells.addAll(cellsToAdding);
+                    cellsToAdding = new ArrayList<>();
+                }
+                for (Square square : squares) {
+                    if (!square.items.isEmpty()) {
+                        square.calculateEating(cells);
+                    }
+                }
 //            System.out.print(System.currentTimeMillis() - now);
 //            System.out.print("\n" + "red: " + red.toString() + "|" +
 //                    "black: " + black.toString() + "|" +
 //                    "green: " + green.toString() + "|" +
 //                    "blue: " + blue.toString() + "|" + "\n");
+            }
         }
     }
 
