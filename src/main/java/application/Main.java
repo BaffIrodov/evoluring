@@ -4,9 +4,11 @@ import java.util.*;
 
 import application.keyController.Key;
 import application.keyController.KeyTitles;
+import application.renders.PauseRender;
 import application.settings.*;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -24,8 +26,10 @@ public class Main extends Application {
     EnergyCostSettings energyCostSettings = gameSettings.getCostSetting();
     FoodAddingSettings foodAddingSettings = gameSettings.getFoodAddingSettings();
     CellGenerationSettings cellGenerationSettings = gameSettings.getCellGenerationSettings();
+    RenderSettings renderSettings = gameSettings.getRenderSettings();
     CellActions cellActions = new CellActions();
     KeyTitles keyTitles = new KeyTitles();
+    PauseRender pauseRender = new PauseRender();
     static List<Cell> cells = new ArrayList<>();
     static List<Square> squares = new ArrayList<>();
     static Map<String, Integer> mapSquareCoordinatesToIndex = new HashMap<>();
@@ -72,19 +76,34 @@ public class Main extends Application {
             Scene scene = new Scene(root, boardSettings.getWidth() * boardSettings.getSquareSize(), boardSettings.getHeight() * boardSettings.getSquareSize());
 
             // control
+            scene.addEventFilter(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
+
+                double realX = mouseEvent.getX() / boardSettings.getSquareSize();
+                double realY = mouseEvent.getY() / boardSettings.getSquareSize();
+                int index = mapSquareCoordinatesToIndex.get((int) realX + "|" + (int) realY);
+                Square square = squares.get(index);
+                int i = 0;
+            });
             scene.addEventFilter(KeyEvent.KEY_PRESSED, key -> {
                 if (keyTitles.mapKeyByKeyCodes.containsKey(key.getCode())){
                     if (key.getCode() == KeyCode.SPACE) {
                         gameStoped = !gameStoped;
                         if (gameStoped) {
-                            graphicsContext.setFill(Color.BLACK);
-                            graphicsContext.setFont(new Font("", 14));
-                            String globalDescription = "";
-                            for (Key currentKey : keyTitles.keyList) {
-                                globalDescription += currentKey.getName() + " - "
-                                        + currentKey.getDescription() + "\n";
+                            if (renderSettings.pauseKeySettingsEnable || renderSettings.pauseGameConditionEnable) {
+                                if (renderSettings.pauseBackgroundEnable) {
+                                    graphicsContext.setFill(Color.color(0.9, 0.9, 0.9, 0.6));
+                                    graphicsContext.fillRect(0, 0, 600, 500);
+                                }
+                                graphicsContext.setFill(Color.BLACK);
+                                graphicsContext.setFont(new Font("", 16));
+                                String splitter = "\n----------------\n";
+                                String keyDescription = renderSettings.pauseKeySettingsEnable ?
+                                        pauseRender.getKeyDescriptions(keyTitles) : "";
+                                String gameCondition = renderSettings.pauseGameConditionEnable ?
+                                        pauseRender.getGameCondition(cells) : "";
+                                graphicsContext.fillText(keyDescription + splitter + gameCondition,
+                                        30, 30);
                             }
-                            graphicsContext.fillText(globalDescription, 30, 30);
                         }
                     }
                     if (key.getCode() == KeyCode.UP) {
