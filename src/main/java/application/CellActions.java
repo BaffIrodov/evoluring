@@ -73,7 +73,7 @@ public class CellActions {
             cell.energy -= energyCostSettings.eatCloseFoodActive;
         }
         square.closeFood = 0;
-        square.calculateColor(true);
+        square.calculateColor(true, gameSettings.getRenderSettings());
     }
 
     public void teleportCell(Cell cell){

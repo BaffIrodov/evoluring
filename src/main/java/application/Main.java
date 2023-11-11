@@ -2,6 +2,7 @@ package application;
 
 import java.util.*;
 
+import application.frontground.FrontGroundController;
 import application.keyController.Key;
 import application.keyController.KeyTitles;
 import application.renders.PauseRender;
@@ -27,6 +28,7 @@ public class Main extends Application {
     FoodAddingSettings foodAddingSettings = gameSettings.getFoodAddingSettings();
     CellGenerationSettings cellGenerationSettings = gameSettings.getCellGenerationSettings();
     RenderSettings renderSettings = gameSettings.getRenderSettings();
+    FrontGroundController frontGroundController = new FrontGroundController();
     CellActions cellActions = new CellActions();
     KeyTitles keyTitles = new KeyTitles();
     PauseRender pauseRender = new PauseRender();
@@ -79,11 +81,15 @@ public class Main extends Application {
 
             // control
             scene.addEventFilter(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
-
                 double realX = mouseEvent.getX() / boardSettings.getSquareSize();
                 double realY = mouseEvent.getY() / boardSettings.getSquareSize();
                 int index = mapSquareCoordinatesToIndex.get((int) realX + "|" + (int) realY);
                 Square square = squares.get(index);
+                if (square.frontGroundColor != Color.BLACK) {
+                    square.frontGroundColor = Color.BLACK;
+                } else {
+                    square.frontGroundColor = null;
+                }
                 int i = 0;
             });
             scene.addEventFilter(KeyEvent.KEY_PRESSED, key -> {
@@ -282,9 +288,16 @@ public class Main extends Application {
                     } else {
                         cellsToDelete.add(cell);
 //                    currentSquare.freeFood += foodAddingSettings.freeEatAddingByDeath;
-//                    currentSquare.calculateColor(true);
+//                    currentSquare.calculateColor(true, gameSettings.getRenderSettings());
                     }
                 }
+                for (Square square : squares) { //отрисовка квадратиков
+                    if (square.frontGroundColor != null) {
+                        graphicsContext.setFill(square.frontGroundColor);
+                        graphicsContext.fillRect(square.coordinates.x, square.coordinates.y, boardSettings.getSquareSize(), boardSettings.getSquareSize());
+                    }
+                }
+//                frontGroundController.renderQRCode(cells);
                 if (!cellsToDelete.isEmpty()) {
                     cellsToDelete.forEach(e -> cells.remove(e));
                     cellsToDelete = new ArrayList<>();
@@ -295,7 +308,7 @@ public class Main extends Application {
                 }
                 for (Square square : squares) {
                     if (!square.items.isEmpty()) {
-                        square.calculateEating(cells);
+                        square.calculateEating(cells, gameSettings.getRenderSettings());
                     }
                 }
 //            System.out.print(System.currentTimeMillis() - now);
@@ -319,45 +332,45 @@ public class Main extends Application {
     }
 
     public void cellAdding() {
-        cells.add(new Cell("red", 1, 500, new Coordinates(150, 150), new DNA("abcdh", 0), Color.RED));
+//        cells.add(new Cell("red", 1, 500, new Coordinates(150, 150), new DNA("abcdh", 0), Color.RED));
         cells.add(new Cell("black", 1, 500, new Coordinates(450, 150), new DNA("abcdh", 0), Color.BLACK));
-        cells.add(new Cell("green", 1, 500, new Coordinates(150, 450), new DNA("h", 0), Color.GREEN));
-        cells.add(new Cell("blue", 1, 500, new Coordinates(450, 450), new DNA("h", 0), Color.BLUE));
+//        cells.add(new Cell("green", 1, 500, new Coordinates(150, 450), new DNA("h", 0), Color.GREEN));
+//        cells.add(new Cell("blue", 1, 500, new Coordinates(450, 450), new DNA("h", 0), Color.BLUE));
     }
 
     public void testFreeFoodInDistrict() {
         for (Square square : squares) {
             if (square.coordinates.x >= 100 && square.coordinates.x <= 200 && square.coordinates.y >= 100 && square.coordinates.y <= 200) {
                 square.freeFood += 100;
-                square.calculateColor(true);
+                square.calculateColor(true, gameSettings.getRenderSettings());
             }
             if (square.coordinates.x >= 200 && square.coordinates.x <= 400 && square.coordinates.y >= 140 && square.coordinates.y <= 160) {
                 square.freeFood += 100;
-                square.calculateColor(true);
+                square.calculateColor(true, gameSettings.getRenderSettings());
             }
             if (square.coordinates.x >= 400 && square.coordinates.x <= 500 && square.coordinates.y >= 100 && square.coordinates.y <= 200) {
                 square.freeFood += 100;
-                square.calculateColor(true);
+                square.calculateColor(true, gameSettings.getRenderSettings());
             }
             if (square.coordinates.x >= 200 && square.coordinates.x <= 400 && square.coordinates.y >= 440 && square.coordinates.y <= 460) {
                 square.freeFood += 100;
-                square.calculateColor(true);
+                square.calculateColor(true, gameSettings.getRenderSettings());
             }
             if (square.coordinates.x >= 100 && square.coordinates.x <= 200 && square.coordinates.y >= 400 && square.coordinates.y <= 500) {
                 square.freeFood += 100;
-                square.calculateColor(true);
+                square.calculateColor(true, gameSettings.getRenderSettings());
             }
             if (square.coordinates.x >= 440 && square.coordinates.x <= 460 && square.coordinates.y >= 200 && square.coordinates.y <= 400) {
                 square.freeFood += 100;
-                square.calculateColor(true);
+                square.calculateColor(true, gameSettings.getRenderSettings());
             }
             if (square.coordinates.x >= 400 && square.coordinates.x <= 500 && square.coordinates.y >= 400 && square.coordinates.y <= 500) {
                 square.freeFood += 100;
-                square.calculateColor(true);
+                square.calculateColor(true, gameSettings.getRenderSettings());
             }
             if (square.coordinates.x >= 140 && square.coordinates.x <= 160 && square.coordinates.y >= 200 && square.coordinates.y <= 400) {
                 square.freeFood += 100;
-                square.calculateColor(true);
+                square.calculateColor(true, gameSettings.getRenderSettings());
             }
         }
 
@@ -367,7 +380,7 @@ public class Main extends Application {
         for (Square square : squares) {
             if (square.coordinates.x >= 700 && square.coordinates.x <= 800) {
                 square.closeFood += 100;
-                square.calculateColor(true);
+                square.calculateColor(true, gameSettings.getRenderSettings());
             }
         }
 
@@ -379,7 +392,7 @@ public class Main extends Application {
             Square randomSquare = squares.get(randomSquareIndex);
             randomSquare.freeFoodOnLastFrame = randomSquare.freeFood;
             randomSquare.freeFood += foodAddingSettings.freeEatAddingByEveryTick;
-            randomSquare.calculateColor(false);
+            randomSquare.calculateColor(false, gameSettings.getRenderSettings());
         }
     }
 
@@ -389,7 +402,7 @@ public class Main extends Application {
             Square randomSquare = squares.get(randomSquareIndex);
             randomSquare.closeFoodOnLastFrame = randomSquare.closeFood;
             randomSquare.closeFood += foodAddingSettings.closeEatAddingByEveryTick;
-            randomSquare.calculateColor(false);
+            randomSquare.calculateColor(false, gameSettings.getRenderSettings());
         }
     }
 
