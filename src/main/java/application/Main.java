@@ -332,10 +332,10 @@ public class Main extends Application {
     }
 
     public void cellAdding() {
-//        cells.add(new Cell("red", 1, 500, new Coordinates(150, 150), new DNA("abcdh", 0), Color.RED));
-        cells.add(new Cell("black", 1, 500, new Coordinates(450, 150), new DNA("abcdh", 0), Color.BLACK));
-//        cells.add(new Cell("green", 1, 500, new Coordinates(150, 450), new DNA("h", 0), Color.GREEN));
-//        cells.add(new Cell("blue", 1, 500, new Coordinates(450, 450), new DNA("h", 0), Color.BLUE));
+        cells.add(new Cell("red", 1, 500, new Coordinates(150, 150), new DNA("a", 0), Color.RED));
+        cells.add(new Cell("black", 1, 500, new Coordinates(450, 150), new DNA("b", 0), Color.BLACK));
+        cells.add(new Cell("green", 1, 500, new Coordinates(150, 450), new DNA("c", 0), Color.GREEN));
+        cells.add(new Cell("blue", 1, 500, new Coordinates(450, 450), new DNA("d", 0), Color.BLUE));
     }
 
     public void testFreeFoodInDistrict() {
