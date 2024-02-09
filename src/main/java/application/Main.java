@@ -93,7 +93,7 @@ public class Main extends Application {
                 int i = 0;
             });
             scene.addEventFilter(KeyEvent.KEY_PRESSED, key -> {
-                if (keyTitles.mapKeyByKeyCodes.containsKey(key.getCode())){
+                if (keyTitles.mapKeyByKeyCodes.containsKey(key.getCode())) {
                     if (key.getCode() == KeyCode.SPACE) {
                         gameStoped = !gameStoped;
                         if (gameStoped) {
@@ -186,25 +186,15 @@ public class Main extends Application {
                     graphicsContext.setFill(square.color);
                     graphicsContext.fillRect(square.coordinates.x, square.coordinates.y, boardSettings.getSquareSize(), boardSettings.getSquareSize());
                 }
-                Integer red = 0;
-                Integer black = 0;
-                Integer green = 0;
-                Integer blue = 0;
                 for (Cell cell : cells) {
-                    switch (cell.name) {
-                        case "red" -> red++;
-                        case "black" -> black++;
-                        case "green" -> green++;
-                        case "blue" -> blue++;
-                    }
                     boolean isDeath = cell.checkIfDeath();
-                    Square currentSquare = getCurrentSquare(cell);
-                    if (cellGenerationSettings.generateByFood) {
-                        if (cell.energy > cellGenerationSettings.costOfGenerationByFood) {
-                            cellsToAdding.add(cell.generateChild(boardSettings.getSquareSize()));
-                        }
-                    }
                     if (!isDeath) {
+                        Square currentSquare = getCurrentSquare(cell);
+                        if (cellGenerationSettings.generateByFood) {
+                            if (cell.energy > cellGenerationSettings.costOfGenerationByFood) {
+                                cellsToAdding.add(cell.generateChild(boardSettings.getSquareSize()));
+                            }
+                        }
                         CellActions.CellActionsNames nextAction = cell.getNextAction();
                         switch (nextAction) {
                             case GENERATE_CHILD -> {
@@ -252,8 +242,6 @@ public class Main extends Application {
                         cell.energy--;
                     } else {
                         cellsToDelete.add(cell);
-//                    currentSquare.freeFood += foodAddingSettings.freeEatAddingByDeath;
-//                    currentSquare.calculateColor(true, gameSettings.getRenderSettings());
                     }
                 }
                 for (Square square : squares) { //отрисовка квадратиков
@@ -276,11 +264,6 @@ public class Main extends Application {
                         square.calculateEating(cells, gameSettings.getRenderSettings());
                     }
                 }
-//            System.out.print(System.currentTimeMillis() - now);
-//            System.out.print("\n" + "red: " + red.toString() + "|" +
-//                    "black: " + black.toString() + "|" +
-//                    "green: " + green.toString() + "|" +
-//                    "blue: " + blue.toString() + "|" + "\n");
             }
         }
     }
@@ -372,18 +355,16 @@ public class Main extends Application {
     }
 
     public Square getCurrentSquare(Cell cell) {
-        if (this.mapSquareCoordinatesToIndex.get((String.valueOf(cell.coordinates.x / this.boardSettings.getSquareSize())
-                + "|" + String.valueOf(cell.coordinates.y / this.boardSettings.getSquareSize()))) == null) {
-            int wow = 0;
+        int realXCoordinate = cell.coordinates.x / this.boardSettings.getSquareSize();
+        int realYCoordinate = cell.coordinates.y / this.boardSettings.getSquareSize();
+        if (mapSquareCoordinatesToIndex.get(realXCoordinate
+                + "|" + realYCoordinate) == null) {
             cellActions.teleportCell(cell);
+            realXCoordinate = cell.coordinates.x / this.boardSettings.getSquareSize();
+            realYCoordinate = cell.coordinates.y / this.boardSettings.getSquareSize();
         }
-        if ((String.valueOf(cell.coordinates.x / this.boardSettings.getSquareSize())
-                + "|" + String.valueOf(cell.coordinates.y / this.boardSettings.getSquareSize())) != null) {
-            return squares.get(this.mapSquareCoordinatesToIndex.get((String.valueOf(cell.coordinates.x / this.boardSettings.getSquareSize())
-                    + "|" + String.valueOf(cell.coordinates.y / this.boardSettings.getSquareSize()))));
-        } else {
-            return squares.get(this.mapSquareCoordinatesToIndex.get("100" + "|" + "100"));
-        }
+        return squares.get(mapSquareCoordinatesToIndex.get(realXCoordinate
+                + "|" + realYCoordinate));
     }
 
     public static void main(String[] args) {

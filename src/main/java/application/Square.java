@@ -99,6 +99,16 @@ public class Square {
                     }
                 }
                 this.freeFood = 0;
+            } else {
+                AtomicReference<Integer> cellIncrementByFreeFoodAfterBattle = new AtomicReference<>(0);
+                mapCellCountByCellName.forEach((k, v) -> {
+                    cellIncrementByFreeFoodAfterBattle.set(this.freeFood / v);
+                });
+                for (Object item : this.items) {
+                    Cell cell = (Cell) item;
+                    cell.energy += cellIncrementByFreeFoodAfterBattle.get();
+                }
+                this.freeFood = 0;
             }
         }
     }
