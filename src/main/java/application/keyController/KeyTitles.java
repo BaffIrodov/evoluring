@@ -14,7 +14,10 @@ public class KeyTitles {
             new Key("Стрелка наверх", "Создать клетки", KeyCode.UP),
             new Key("Стрелка влево", "Включить/отключить добавление еды", KeyCode.LEFT),
             new Key("Стрелка вниз", "Включить/отключить добавление только close-еды", KeyCode.DOWN),
-            new Key("Стрелка вправо", "Добавить еду в определенном участке", KeyCode.RIGHT)
+            new Key("Стрелка вправо", "Добавить еду в определенном участке", KeyCode.RIGHT),
+            new Key("Кнопка 1", "Поставить скорость игры х1", KeyCode.DIGIT1),
+            new Key("Кнопка 2", "Поставить скорость игры х2", KeyCode.DIGIT2),
+            new Key("Кнопка 3", "Поставить скорость игры х10", KeyCode.DIGIT3)
     );
     public Map<KeyCode, Key> mapKeyByKeyCodes;
 

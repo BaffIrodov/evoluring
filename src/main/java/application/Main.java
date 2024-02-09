@@ -87,18 +87,6 @@ public class Main extends Application {
                 int i = 0;
             });
             scene.addEventFilter(KeyEvent.KEY_PRESSED, key -> {
-                if (key.getCode() == KeyCode.DIGIT1) {
-                    this.realFrameCount = 1;
-                    System.out.println(this.realFrameCount);
-                }
-                if (key.getCode() == KeyCode.DIGIT2) {
-                    this.realFrameCount = 3;
-                    System.out.println(this.realFrameCount);
-                }
-                if (key.getCode() == KeyCode.DIGIT3) {
-                    this.realFrameCount = 10;
-                    System.out.println(this.realFrameCount);
-                }
                 if (keyTitles.mapKeyByKeyCodes.containsKey(key.getCode())){
                     if (key.getCode() == KeyCode.SPACE) {
                         gameStoped = !gameStoped;
@@ -131,6 +119,15 @@ public class Main extends Application {
                     }
                     if (key.getCode() == KeyCode.RIGHT) {
                         testFreeFoodInDistrict();
+                    }
+                    if (key.getCode() == KeyCode.DIGIT1) {
+                        this.realFrameCount = 1;
+                    }
+                    if (key.getCode() == KeyCode.DIGIT2) {
+                        this.realFrameCount = 2;
+                    }
+                    if (key.getCode() == KeyCode.DIGIT3) {
+                        this.realFrameCount = 10;
                     }
                 }
             });
