@@ -9,6 +9,7 @@ import application.renders.PauseRender;
 import application.settings.*;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
@@ -80,80 +81,111 @@ public class Main extends Application {
             Scene scene = new Scene(root, boardSettings.getWidth() * boardSettings.getSquareSize(), boardSettings.getHeight() * boardSettings.getSquareSize());
 
             // control
-            scene.addEventFilter(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
-                double realX = mouseEvent.getX() / boardSettings.getSquareSize();
-                double realY = mouseEvent.getY() / boardSettings.getSquareSize();
-                int index = mapSquareCoordinatesToIndex.get((int) realX + "|" + (int) realY);
-                Square square = squares.get(index);
-                if (square.frontGroundColor != Color.BLACK) {
-                    square.frontGroundColor = Color.BLACK;
-                } else {
-                    square.frontGroundColor = null;
-                }
-                int i = 0;
-            });
-            scene.addEventFilter(KeyEvent.KEY_PRESSED, key -> {
-                if (keyTitles.mapKeyByKeyCodes.containsKey(key.getCode())) {
-                    if (key.getCode() == KeyCode.SPACE) {
-                        gameStoped = !gameStoped;
-                        if (gameStoped) {
-                            if (renderSettings.pauseKeySettingsEnable || renderSettings.pauseGameConditionEnable) {
-                                if (renderSettings.pauseBackgroundEnable) {
-                                    graphicsContext.setFill(Color.color(0.9, 0.9, 0.9, 0.6));
-                                    graphicsContext.fillRect(0, 0, 600, 500);
-                                }
-                                graphicsContext.setFill(Color.BLACK);
-                                graphicsContext.setFont(new Font("", 16));
-                                String splitter = "\n----------------\n";
-                                String keyDescription = renderSettings.pauseKeySettingsEnable ?
-                                        pauseRender.getKeyDescriptions(keyTitles) : "";
-                                String gameCondition = renderSettings.pauseGameConditionEnable ?
-                                        pauseRender.getGameCondition(cells) : "";
-                                graphicsContext.fillText(keyDescription + splitter + gameCondition,
-                                        30, 30);
-                            }
+            scene.addEventFilter(MouseEvent.MOUSE_DRAGGED, mouseEvent -> {
+                if (mouseEvent.getButton() == MouseButton.PRIMARY) {
+                    double realX = mouseEvent.getX() / boardSettings.getSquareSize();
+                    double realY = mouseEvent.getY() / boardSettings.getSquareSize();
+                    for (int i = 0; i < 20; i++) {
+                        for (int j = 0; j < 20; j++) {
+                            int index = mapSquareCoordinatesToIndex.get((int) (realX + i) + "|" + (int) (realY + j));
+                            Square square = squares.get(index);
+                            square.freeFood += 30;
+//                            square.calculateColor(true, renderSettings);
                         }
                     }
-                    if (key.getCode() == KeyCode.UP) {
-                        cellAdding();
-                    }
-                    if (key.getCode() == KeyCode.LEFT) {
-                        isFoodAdding = !isFoodAdding;
-                    }
-                    if (key.getCode() == KeyCode.DOWN) {
-                        isOnlyCloseAdding = !isOnlyCloseAdding;
-                    }
-                    if (key.getCode() == KeyCode.RIGHT) {
-                        testFreeFoodInDistrict();
-                    }
-                    if (key.getCode() == KeyCode.DIGIT1) {
-                        this.realFrameCount = 1;
-                    }
-                    if (key.getCode() == KeyCode.DIGIT2) {
-                        this.realFrameCount = 2;
-                    }
-                    if (key.getCode() == KeyCode.DIGIT3) {
-                        this.realFrameCount = 10;
+                } else if (mouseEvent.getButton() == MouseButton.MIDDLE) {
+                    double realX = mouseEvent.getX() / boardSettings.getSquareSize();
+                    double realY = mouseEvent.getY() / boardSettings.getSquareSize();
+                    for (int i = 0; i < 20; i++) {
+                        for (int j = 0; j < 20; j++) {
+                            int index = mapSquareCoordinatesToIndex.get((int) (realX + i) + "|" + (int) (realY + j));
+                            Square square = squares.get(index);
+                            square.closeFood += 30;
+                            square.calculateColor(true, renderSettings);
+                        }
                     }
                 }
-            });
-            // initialization playing field
-            squareAdding();
+
+//                    if (square.frontGroundColor != Color.BLACK) {
+//                        square.frontGroundColor = Color.BLACK;
+//                    } else {
+//                        square.frontGroundColor = null;
+//                    }
+            }
+        );
+        scene.addEventFilter(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
+            if (mouseEvent.getButton() == MouseButton.SECONDARY) {
+                double realX = mouseEvent.getX() / boardSettings.getSquareSize();
+                double realY = mouseEvent.getY() / boardSettings.getSquareSize();
+                cells.add(new Cell("red", 1, 500, new Coordinates((int) realX * boardSettings.getSquareSize(), (int) realY * boardSettings.getSquareSize()), new DNA("ach", 0), Color.RED));
+            }
+        });
+        scene.addEventFilter(KeyEvent.KEY_PRESSED, key -> {
+            if (keyTitles.mapKeyByKeyCodes.containsKey(key.getCode())) {
+                if (key.getCode() == KeyCode.SPACE) {
+                    gameStoped = !gameStoped;
+                    if (gameStoped) {
+                        if (renderSettings.pauseKeySettingsEnable || renderSettings.pauseGameConditionEnable) {
+                            if (renderSettings.pauseBackgroundEnable) {
+                                graphicsContext.setFill(Color.color(0.9, 0.9, 0.9, 0.6));
+                                graphicsContext.fillRect(0, 0, 600, 500);
+                            }
+                            graphicsContext.setFill(Color.BLACK);
+                            graphicsContext.setFont(new Font("", 16));
+                            String splitter = "\n----------------\n";
+                            String keyDescription = renderSettings.pauseKeySettingsEnable ?
+                                    pauseRender.getKeyDescriptions(keyTitles) : "";
+                            String gameCondition = renderSettings.pauseGameConditionEnable ?
+                                    pauseRender.getGameCondition(cells) : "";
+                            graphicsContext.fillText(keyDescription + splitter + gameCondition,
+                                    30, 30);
+                        }
+                    }
+                }
+                if (key.getCode() == KeyCode.UP) {
+                    cellAdding();
+                }
+                if (key.getCode() == KeyCode.LEFT) {
+                    isFoodAdding = !isFoodAdding;
+                }
+                if (key.getCode() == KeyCode.DOWN) {
+                    isOnlyCloseAdding = !isOnlyCloseAdding;
+                }
+                if (key.getCode() == KeyCode.RIGHT) {
+                    testFreeFoodInDistrict();
+                }
+                if (key.getCode() == KeyCode.DIGIT1) {
+                    this.realFrameCount = 1;
+                }
+                if (key.getCode() == KeyCode.DIGIT2) {
+                    this.realFrameCount = 2;
+                }
+                if (key.getCode() == KeyCode.DIGIT3) {
+                    this.realFrameCount = 10;
+                }
+            }
+        });
+        // initialization playing field
+        squareAdding();
 
 
 //            cellAdding();
 
 
-            //food adding
-            //If you do not want to use css style, you can just delete the next line.
-            scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-            primaryStage.setScene(scene);
-            primaryStage.setTitle("EVOLURING");
-            primaryStage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        //food adding
+        //If you do not want to use css style, you can just delete the next line.
+        scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("EVOLURING");
+        primaryStage.show();
+    } catch(
+    Exception e)
+
+    {
+        e.printStackTrace();
     }
+
+}
 
     // tick
     public void tick(GraphicsContext graphicsContext) {
@@ -263,6 +295,15 @@ public class Main extends Application {
                     });
                     cellsToDelete = new ArrayList<>();
                 }
+//                if (!cellsToAdding.isEmpty()) {
+//                    cellsToAdding.forEach(e -> {
+//                        if (cells.size() < 10000) {
+//                            cells.add(e);
+//                            getCurrentSquare(e).addObjectToSquareItems(e);
+//                        }
+//                    });
+//                    cellsToAdding = new ArrayList<>();
+//                }
                 if (!cellsToAdding.isEmpty()) {
                     cellsToAdding.forEach(e -> {
                         cells.add(e);
@@ -328,6 +369,43 @@ public class Main extends Application {
                 square.calculateColor(true, gameSettings.getRenderSettings());
             }
             if (square.coordinates.x >= 140 && square.coordinates.x <= 160 && square.coordinates.y >= 200 && square.coordinates.y <= 400) {
+                square.freeFood += 100;
+                square.calculateColor(true, gameSettings.getRenderSettings());
+            }
+        }
+
+    }
+
+    public void testFreeFoodInDistrict2() {
+        for (Square square : squares) {
+            if (square.coordinates.x >= 100 && square.coordinates.x <= 150 && square.coordinates.y >= 100 && square.coordinates.y <= 400) {
+                square.freeFood += 100;
+                square.calculateColor(true, gameSettings.getRenderSettings());
+            }
+            // буква Н
+            if (square.coordinates.x >= 370 && square.coordinates.x <= 420 && square.coordinates.y >= 100 && square.coordinates.y <= 400) {
+                square.freeFood += 100;
+                square.calculateColor(true, gameSettings.getRenderSettings());
+            }
+            if (square.coordinates.x >= 550 && square.coordinates.x <= 600 && square.coordinates.y >= 100 && square.coordinates.y <= 400) {
+                square.freeFood += 100;
+                square.calculateColor(true, gameSettings.getRenderSettings());
+            }
+            if (square.coordinates.x >= 420 && square.coordinates.x <= 550 && square.coordinates.y >= 230 && square.coordinates.y <= 280) {
+                square.freeFood += 100;
+                square.calculateColor(true, gameSettings.getRenderSettings());
+            }
+
+            // буква и
+            if (square.coordinates.x >= 620 && square.coordinates.x <= 670 && square.coordinates.y >= 100 && square.coordinates.y <= 400) {
+                square.freeFood += 100;
+                square.calculateColor(true, gameSettings.getRenderSettings());
+            }
+            if (square.coordinates.x >= 800 && square.coordinates.x <= 850 && square.coordinates.y >= 100 && square.coordinates.y <= 400) {
+                square.freeFood += 100;
+                square.calculateColor(true, gameSettings.getRenderSettings());
+            }
+            if (square.coordinates.x + square.coordinates.y >= 670 && square.coordinates.x + square.coordinates.y <= 800) {
                 square.freeFood += 100;
                 square.calculateColor(true, gameSettings.getRenderSettings());
             }
