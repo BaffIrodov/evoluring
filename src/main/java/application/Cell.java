@@ -66,8 +66,10 @@ public class Cell {
 
     public Cell generateChild(int squareSize) {
         Random rand = new Random();
-        int rangeX = rand.nextInt(1, 3);
-        int rangeY = rand.nextInt(1, 3);
+//        int rangeX = rand.nextInt(0, 1);
+//        int rangeY = rand.nextInt(0, 1);
+        int rangeX = 1;
+        int rangeY = 1;
         int signForRangeX = rand.nextInt(1, 2);
         int signForRangeY = rand.nextInt(1, 2);
         if (signForRangeX == 2) {
@@ -76,9 +78,14 @@ public class Cell {
         if (signForRangeY == 2) {
             rangeY = -rangeY;
         }
-//        this.energy -= 100;
         this.energy -= this.energy/2;
-        Cell newCell = new Cell(this.name, this.generationNumber++, /*100*/this.energy/2, new Coordinates(this.coordinates.x + rangeX * squareSize, this.coordinates.y + rangeY * squareSize), new DNA(this.dnaGeneration(this.dna.dnaCode), 0), this.color);
+        Cell newCell = new Cell(
+                this.name,
+                this.generationNumber++,
+                this.energy/2,
+                new Coordinates(this.coordinates.x + rangeX * squareSize, this.coordinates.y + rangeY * squareSize),
+                new DNA(this.dnaGeneration(this.dna.dnaCode), 0),
+                this.color);
         newCell.parentCell = this;
         this.childCell = newCell;
         return newCell;
