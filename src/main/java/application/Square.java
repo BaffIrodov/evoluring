@@ -1,5 +1,6 @@
 package application;
 
+import application.settings.RenderSettings;
 import javafx.scene.paint.Color;
 
 import java.util.*;
@@ -14,6 +15,7 @@ public class Square {
     public List<Object> items; //на клетке может находиться несколько клеток, так же закладываюсь на то, что это не только клетки
 
     public Color color; //будем устанавливать цвет самой клетки внутри класса
+    public Color frontGroundColor = null; //этот цвет перезатирает "свой" цвет квадрата
 
     public Square(Coordinates coordinates, int freeFood, int closeFood, List<Object> items) {
         this.coordinates = coordinates;
@@ -23,40 +25,42 @@ public class Square {
         this.color = Color.color(1, 1, 1);
     }
 
-    public void calculateColor(Boolean forceCalculate) {
-        if (freeFood != freeFoodOnLastFrame || forceCalculate) {
-            float freeFood = (float) this.freeFood;
-            float green = 1000 - freeFood;
-            if (green < 0) {
-                green = 0;
+    public void calculateColor(Boolean forceCalculate, RenderSettings renderSettings) {
+        if (renderSettings.isCalculatingColor) {
+            if (freeFood != freeFoodOnLastFrame || forceCalculate) {
+                float freeFood = (float) this.freeFood;
+                float green = 1000 - freeFood;
+                if (green < 0) {
+                    green = 0;
+                }
+                float blue = 1000 - freeFood;
+                if (blue < 0) {
+                    blue = 0;
+                }
+                this.color = Color.color(this.color.getRed(), (green / 1000), (blue / 1000));
             }
-            float blue = 1000 - freeFood;
-            if (blue < 0) {
-                blue = 0;
+            if (closeFood != closeFoodOnLastFrame || forceCalculate) {
+                float closeFood = (float) this.closeFood;
+                float red = 1000 - closeFood;
+                if (red < 0) {
+                    red = 0;
+                }
+                float blue = 1000 - closeFood;
+                if (blue < 0) {
+                    blue = 0;
+                }
+                this.color = Color.color((red / 1000), this.color.getGreen(), (blue / 1000));
             }
-            this.color = Color.color(this.color.getRed(), (green / 1000), (blue / 1000));
-        }
-        if (closeFood != closeFoodOnLastFrame || forceCalculate) {
-            float closeFood = (float) this.closeFood;
-            float red = 1000 - closeFood;
-            if (red < 0) {
-                red = 0;
-            }
-            float blue = 1000 - closeFood;
-            if (blue < 0) {
-                blue = 0;
-            }
-            this.color = Color.color((red / 1000), this.color.getGreen(), (blue / 1000));
         }
     }
 
-    public void calculateEating(List<Cell> cells) { //тут сразу все методы - свободная еда, закрытая, сражения
+    public void calculateEating(List<Cell> cells, RenderSettings renderSettings) { //тут сразу все методы - свободная еда, закрытая, сражения
         if (this.items.size() == 1) { //обсчитываем свободную или закрытую еду и всё
             Cell cell = (Cell) this.items.get(0);
             cell.energy += this.freeFood;
             this.freeFood = 0;
             clearItems();
-            calculateColor(true);
+            calculateColor(true, renderSettings);
         }
         if (this.items.size() > 1) {
             Map<String, Integer> mapAttackPlusDefenceByCellName = new HashMap<>();
