@@ -46,6 +46,7 @@ public class Cell {
         this.actionMap.put("f", CellActions.CellActionsNames.ATTACK);
         this.actionMap.put("g", CellActions.CellActionsNames.DEFENCE);
         this.actionMap.put("h", CellActions.CellActionsNames.GENERATE_CHILD);
+//        this.actionMap.put("i", CellActions.CellActionsNames.GENERATE_AND_EAT_CLOSE_FOOD);
     }
 
     public CellActions.CellActionsNames getNextAction() {
@@ -70,13 +71,17 @@ public class Cell {
 //        int rangeY = rand.nextInt(0, 1);
         int rangeX = 1;
         int rangeY = 1;
-        int signForRangeX = rand.nextInt(1, 2);
-        int signForRangeY = rand.nextInt(1, 2);
+        int signForRangeX = rand.nextInt(1, 3);
+        int signForRangeY = rand.nextInt(1, 3);
         if (signForRangeX == 2) {
             rangeX = -rangeX;
+        } else if (signForRangeX == 3) {
+            rangeX = 0;
         }
         if (signForRangeY == 2) {
             rangeY = -rangeY;
+        } else if (signForRangeY == 3) {
+            rangeY = 0;
         }
         this.energy -= this.energy/2;
         Cell newCell = new Cell(
@@ -144,6 +149,16 @@ public class Cell {
         if(result.length() > 30) {
             result = result.substring(0, 30);
         }
+//        if(result.contains("i")) {
+//            char[] chars = result.toCharArray();
+//            String superResult = "";
+//            for (char item : chars) {
+//                if (item != 'f' && item != 'g') {
+//                    superResult += item;
+//                }
+//            }
+//            result = superResult;
+//        }
         return result;
     }
 

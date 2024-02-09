@@ -198,8 +198,10 @@ public class Main extends Application {
                         CellActions.CellActionsNames nextAction = cell.getNextAction();
                         switch (nextAction) {
                             case GENERATE_CHILD -> {
-                                if (cellGenerationSettings.generateByGene) {
-                                    cellsToAdding.add(cellActions.onGenerateChild(cell));
+                                if (cellGenerationSettings.generateByGene && cell.energy > cellGenerationSettings.costOfGenerationByFood) {
+                                    Cell newCell = cellActions.onGenerateChild(cell);
+                                    cellsToAdding.add(newCell);
+                                    getCurrentSquare(newCell).addObjectToSquareItems(newCell);
                                 }
                             }
                             case DO_NOTHING -> {
@@ -233,6 +235,9 @@ public class Main extends Application {
                                 currentSquare = getCurrentSquare(cell);
                                 cellActions.onEatCloseFood(cell, currentSquare);
                             }
+//                            case GENERATE_AND_EAT_CLOSE_FOOD -> {
+//                                cellActions.onGenerateAndEatCloseFood(cell);
+//                            }
                         }
                         graphicsContext.setFill(cell.color);
                         graphicsContext.fillRect(cell.coordinates.x, cell.coordinates.y, boardSettings.getSquareSize() /*- 1*/, boardSettings.getSquareSize() /*- 1*/);
@@ -252,11 +257,17 @@ public class Main extends Application {
                 }
 //                frontGroundController.renderQRCode(cells);
                 if (!cellsToDelete.isEmpty()) {
-                    cellsToDelete.forEach(e -> cells.remove(e));
+                    cellsToDelete.forEach(e -> {
+                        getCurrentSquare(e).removeObjectFromSquareItems(e);
+                        cells.remove(e);
+                    });
                     cellsToDelete = new ArrayList<>();
                 }
                 if (!cellsToAdding.isEmpty()) {
-                    cells.addAll(cellsToAdding);
+                    cellsToAdding.forEach(e -> {
+                        cells.add(e);
+                        getCurrentSquare(e).addObjectToSquareItems(e);
+                    });
                     cellsToAdding = new ArrayList<>();
                 }
                 for (Square square : squares) {
@@ -280,10 +291,10 @@ public class Main extends Application {
     }
 
     public void cellAdding() {
-        cells.add(new Cell("red", 1, 500, new Coordinates(150, 150), new DNA("a", 0), Color.RED));
-        cells.add(new Cell("black", 1, 500, new Coordinates(450, 150), new DNA("b", 0), Color.BLACK));
-        cells.add(new Cell("green", 1, 500, new Coordinates(150, 450), new DNA("c", 0), Color.GREEN));
-        cells.add(new Cell("blue", 1, 500, new Coordinates(450, 450), new DNA("d", 0), Color.BLUE));
+        cells.add(new Cell("red", 1, 500, new Coordinates(150, 150), new DNA("ach", 0), Color.RED));
+        cells.add(new Cell("black", 1, 500, new Coordinates(450, 150), new DNA("bdh", 0), Color.BLACK));
+        cells.add(new Cell("green", 1, 500, new Coordinates(150, 450), new DNA("cah", 0), Color.GREEN));
+        cells.add(new Cell("blue", 1, 500, new Coordinates(450, 450), new DNA("dbh", 0), Color.BLUE));
     }
 
     public void testFreeFoodInDistrict() {

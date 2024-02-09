@@ -59,7 +59,7 @@ public class Square {
             Cell cell = (Cell) this.items.get(0);
             cell.energy += this.freeFood;
             this.freeFood = 0;
-            clearItems();
+//            clearItems();
             calculateColor(true, renderSettings);
         }
         if (this.items.size() > 1) {
