@@ -2,11 +2,8 @@ package application;
 
 import javafx.scene.paint.Color;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Square {
     public Coordinates coordinates;
@@ -14,7 +11,7 @@ public class Square {
     public int closeFood; //количество энергии на клетке по типу энергии света, которую не каждый может достать
     public int freeFoodOnLastFrame; //количество энергии на клетке в прошлом кадре (если для клетки не менялась еда, то её и не надо перекрашивать
     public int closeFoodOnLastFrame; //закрытая энергия в прошлом
-    public List<Object> items; //на клетке может находиться несколько клеток
+    public List<Object> items; //на клетке может находиться несколько клеток, так же закладываюсь на то, что это не только клетки
 
     public Color color; //будем устанавливать цвет самой клетки внутри класса
 
@@ -61,20 +58,43 @@ public class Square {
             clearItems();
             calculateColor(true);
         }
-        if (this.items.size() == 2) {
-            Cell firstCell = (Cell) this.items.get(0);
-            Cell secondCell = (Cell) this.items.get(1);
-            if(!Objects.equals(firstCell.name, secondCell.name)) {
-                if (Optional.ofNullable(firstCell.attack).orElse(0) > Optional.ofNullable(secondCell.defence).orElse(0)) {
-                    firstCell.energy += secondCell.energy;
-                    this.removeObjectFromSquareItems(secondCell);
-                    cells.remove(secondCell);
+        if (this.items.size() > 1) {
+            Map<String, Integer> mapAttackPlusDefenceByCellName = new HashMap<>();
+            Map<String, Integer> mapEnergyByCellName = new HashMap<>();
+            Map<String, Integer> mapCellCountByCellName = new HashMap<>();
+            this.items.forEach(item -> {
+                Cell cell = (Cell) item;
+                mapAttackPlusDefenceByCellName.merge(cell.name, cell.attack + cell.defence, Integer::sum);
+                mapEnergyByCellName.merge(cell.name, cell.energy, Integer::sum);
+                mapCellCountByCellName.merge(cell.name, 1, Integer::sum);
+            });
+            if (mapAttackPlusDefenceByCellName.size() > 1) {
+                AtomicReference<String> nameOfStrongerCell = new AtomicReference<>("");
+                final Integer[] maxStrongOfCell = {-1};
+                mapAttackPlusDefenceByCellName.forEach((k, v) -> {
+                    if (maxStrongOfCell[0] < v) {
+                        maxStrongOfCell[0] = v;
+                        nameOfStrongerCell.set(k);
+                    }
+                });
+                AtomicReference<Integer> energySumOfLosers = new AtomicReference<>(0);
+                mapEnergyByCellName.forEach((k, v) -> {
+                    if (!Objects.equals(k, nameOfStrongerCell.get())) {
+                        energySumOfLosers.updateAndGet(v1 -> v1 + v);
+                    }
+                });
+                Integer cellIncrementAfterBattle = energySumOfLosers.get() / mapCellCountByCellName.get(nameOfStrongerCell.get());
+                Integer cellIncrementByFreeFoodAfterBattle = this.freeFood / mapCellCountByCellName.get(nameOfStrongerCell.get());
+                for (Object item : this.items) {
+                    Cell cell = (Cell) item;
+                    if (!Objects.equals(cell.name, nameOfStrongerCell.get())) {
+                        this.removeObjectFromSquareItems(cell);
+                        cells.remove(cell);
+                    } else {
+                        cell.energy += cellIncrementAfterBattle + cellIncrementByFreeFoodAfterBattle;
+                    }
                 }
-                if (Optional.ofNullable(secondCell.attack).orElse(0) > Optional.ofNullable(firstCell.defence).orElse(0)) {
-                    secondCell.energy += firstCell.energy;
-                    this.removeObjectFromSquareItems(firstCell);
-                    cells.remove(firstCell);
-                }
+                this.freeFood = 0;
             }
         }
     }

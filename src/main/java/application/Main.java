@@ -92,11 +92,11 @@ public class Main extends Application {
                     System.out.println(this.realFrameCount);
                 }
                 if (key.getCode() == KeyCode.DIGIT2) {
-                    this.realFrameCount = 10;
+                    this.realFrameCount = 3;
                     System.out.println(this.realFrameCount);
                 }
                 if (key.getCode() == KeyCode.DIGIT3) {
-                    this.realFrameCount = 20;
+                    this.realFrameCount = 10;
                     System.out.println(this.realFrameCount);
                 }
                 if (keyTitles.mapKeyByKeyCodes.containsKey(key.getCode())){
@@ -162,7 +162,8 @@ public class Main extends Application {
 //        }
             if (currentTick % 100 == 0) {
 //            isFoodAdding = !isFoodAdding;
-                System.out.println(System.currentTimeMillis() - startGameMills);
+                System.out.println("time: " + (System.currentTimeMillis() - startGameMills)
+                        + " size: " + cells.size() + " fps: " + (100000 / (System.currentTimeMillis() - startGameMills)));
                 startGameMills = System.currentTimeMillis();
             }
 
@@ -212,64 +213,28 @@ public class Main extends Application {
                                 cellActions.onDoNothing(cell);
                             }
                             case MOVE_LEFT -> {
-//                            currentSquare.removeObjectFromSquareItems(cell);
+                                currentSquare.removeObjectFromSquareItems(cell);
                                 cellActions.onMoveLeft(cell);
-                                Square tempSquare = getCurrentSquare(cell);
-                                if (tempSquare.items.stream().anyMatch(e -> {
-                                    return ((Cell) e).name.equals(cell.name);
-                                })) {
-                                    cellActions.onMoveRight(cell);
-                                } else {
-                                    currentSquare.removeObjectFromSquareItems(cell);
-                                    tempSquare.addObjectToSquareItems(cell);
-                                }
-//                            currentSquare = getCurrentSquare(cell);
-//                            currentSquare.addObjectToSquareItems(cell);
+                                currentSquare = getCurrentSquare(cell);
+                                currentSquare.addObjectToSquareItems(cell);
                             }
                             case MOVE_RIGHT -> {
-//                            currentSquare.removeObjectFromSquareItems(cell);
+                                currentSquare.removeObjectFromSquareItems(cell);
                                 cellActions.onMoveRight(cell);
-                                Square tempSquare = getCurrentSquare(cell);
-                                if (tempSquare.items.stream().anyMatch(e -> {
-                                    return ((Cell) e).name.equals(cell.name);
-                                })) {
-                                    cellActions.onMoveLeft(cell);
-                                } else {
-                                    currentSquare.removeObjectFromSquareItems(cell);
-                                    tempSquare.addObjectToSquareItems(cell);
-                                }
-//                            currentSquare = getCurrentSquare(cell);
-//                            currentSquare.addObjectToSquareItems(cell);
+                                currentSquare = getCurrentSquare(cell);
+                                currentSquare.addObjectToSquareItems(cell);
                             }
                             case MOVE_DOWN -> {
-//                            currentSquare.removeObjectFromSquareItems(cell);
+                                currentSquare.removeObjectFromSquareItems(cell);
                                 cellActions.onMoveDown(cell);
-                                Square tempSquare = getCurrentSquare(cell);
-                                if (tempSquare.items.stream().anyMatch(e -> {
-                                    return ((Cell) e).name.equals(cell.name);
-                                })) {
-                                    cellActions.onMoveUp(cell);
-                                } else {
-                                    currentSquare.removeObjectFromSquareItems(cell);
-                                    tempSquare.addObjectToSquareItems(cell);
-                                }
-//                            currentSquare = getCurrentSquare(cell);
-//                            currentSquare.addObjectToSquareItems(cell);
+                                currentSquare = getCurrentSquare(cell);
+                                currentSquare.addObjectToSquareItems(cell);
                             }
                             case MOVE_UP -> {
-//                            currentSquare.removeObjectFromSquareItems(cell);
+                                currentSquare.removeObjectFromSquareItems(cell);
                                 cellActions.onMoveUp(cell);
-                                Square tempSquare = getCurrentSquare(cell);
-                                if (tempSquare.items.stream().anyMatch(e -> {
-                                    return ((Cell) e).name.equals(cell.name);
-                                })) {
-                                    cellActions.onMoveDown(cell);
-                                } else {
-                                    currentSquare.removeObjectFromSquareItems(cell);
-                                    tempSquare.addObjectToSquareItems(cell);
-                                }
-//                            currentSquare = getCurrentSquare(cell);
-//                            currentSquare.addObjectToSquareItems(cell);
+                                currentSquare = getCurrentSquare(cell);
+                                currentSquare.addObjectToSquareItems(cell);
                             }
                             case EAT_CLOSE_FOOD -> {
                                 currentSquare = getCurrentSquare(cell);
