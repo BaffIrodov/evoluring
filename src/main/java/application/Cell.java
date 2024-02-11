@@ -46,7 +46,7 @@ public class Cell {
         this.actionMap.put("f", CellActions.CellActionsNames.ATTACK);
         this.actionMap.put("g", CellActions.CellActionsNames.DEFENCE);
         this.actionMap.put("h", CellActions.CellActionsNames.GENERATE_CHILD);
-//        this.actionMap.put("i", CellActions.CellActionsNames.GENERATE_AND_EAT_CLOSE_FOOD);
+        this.actionMap.put("i", CellActions.CellActionsNames.GENERATE_AND_EAT_CLOSE_FOOD);
     }
 
     public CellActions.CellActionsNames getNextAction() {
@@ -149,22 +149,16 @@ public class Cell {
         if(result.length() > 30) {
             result = result.substring(0, 30);
         }
-//        if(result.contains("i")) {
-//            char[] chars = result.toCharArray();
-//            String superResult = "";
-//            for (char item : chars) {
-//                if (item != 'f' && item != 'g') {
-//                    superResult += item;
-//                }
-//            }
-//            result = superResult;
-//        }
         return result;
     }
 
     public void getCountDnaGenesByTypeAndEnergyCost() { //плата за сложность днк
-        this.attack = this.dna.dnaCode.length() - this.dna.dnaCode.replace("f", "").length();
-        this.defence = this.dna.dnaCode.length() - this.dna.dnaCode.replace("g", "").length();
+        this.attack = this.dna.dnaCode.length() * 2
+                - this.dna.dnaCode.replace("f", "").length()
+                - this.dna.dnaCode.replace("i", "").length();
+        this.defence = this.dna.dnaCode.length() * 2
+                - this.dna.dnaCode.replace("g", "").length()
+                - this.dna.dnaCode.replace("i", "").length();
         int doNothingLength = this.dna.dnaCode.length() - this.dna.dnaCode.replace("o", "").length();
         int moveLeftLength = this.dna.dnaCode.length() - this.dna.dnaCode.replace("a", "").length();
         int moveRightLength = this.dna.dnaCode.length() - this.dna.dnaCode.replace("b", "").length();

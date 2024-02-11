@@ -235,9 +235,9 @@ public class Main extends Application {
                                 currentSquare = getCurrentSquare(cell);
                                 cellActions.onEatCloseFood(cell, currentSquare);
                             }
-//                            case GENERATE_AND_EAT_CLOSE_FOOD -> {
-//                                cellActions.onGenerateAndEatCloseFood(cell);
-//                            }
+                            case GENERATE_AND_EAT_CLOSE_FOOD -> {
+                                cellActions.onGenerateAndEatCloseFood(cell);
+                            }
                         }
                         graphicsContext.setFill(cell.color);
                         graphicsContext.fillRect(cell.coordinates.x, cell.coordinates.y, boardSettings.getSquareSize() /*- 1*/, boardSettings.getSquareSize() /*- 1*/);

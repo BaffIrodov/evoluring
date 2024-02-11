@@ -77,9 +77,9 @@ public class CellActions {
         square.calculateColor(true, gameSettings.getRenderSettings());
     }
 
-//    public void onGenerateAndEatCloseFood(Cell cell) {
-//        cell.energy += cell.energyCost + 1;
-//    }
+    public void onGenerateAndEatCloseFood(Cell cell) {
+        cell.energy += 1;
+    }
 
     public void teleportCell(Cell cell){
         if(cell.coordinates.x < 0){
