@@ -59,7 +59,6 @@ public class Square {
             Cell cell = (Cell) this.items.get(0);
             cell.energy += this.freeFood;
             this.freeFood = 0;
-            calculateColor(true, renderSettings);
         }
         if (this.items.size() > 1) {
             Map<String, Integer> mapAttackPlusDefenceByCellName = new HashMap<>();
@@ -110,6 +109,7 @@ public class Square {
                 this.freeFood = 0;
             }
         }
+        calculateColor(true, renderSettings);
     }
 
     public void addObjectToSquareItems(Object object) {
