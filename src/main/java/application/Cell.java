@@ -46,7 +46,6 @@ public class Cell {
         this.actionMap.put("f", CellActions.CellActionsNames.ATTACK);
         this.actionMap.put("g", CellActions.CellActionsNames.DEFENCE);
         this.actionMap.put("h", CellActions.CellActionsNames.GENERATE_CHILD);
-        this.actionMap.put("i", CellActions.CellActionsNames.GENERATE_AND_EAT_CLOSE_FOOD);
     }
 
     public CellActions.CellActionsNames getNextAction() {
@@ -66,23 +65,8 @@ public class Cell {
     }
 
     public Cell generateChild(int squareSize) {
-        Random rand = new Random();
-//        int rangeX = rand.nextInt(0, 1);
-//        int rangeY = rand.nextInt(0, 1);
         int rangeX = 1;
         int rangeY = 1;
-        int signForRangeX = rand.nextInt(1, 3);
-        int signForRangeY = rand.nextInt(1, 3);
-        if (signForRangeX == 2) {
-            rangeX = -rangeX;
-        } else if (signForRangeX == 3) {
-            rangeX = 0;
-        }
-        if (signForRangeY == 2) {
-            rangeY = -rangeY;
-        } else if (signForRangeY == 3) {
-            rangeY = 0;
-        }
         this.energy -= this.energy/2;
         Cell newCell = new Cell(
                 this.name,

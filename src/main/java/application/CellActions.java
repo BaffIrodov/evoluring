@@ -22,8 +22,7 @@ public class CellActions {
         DNACHANGE,
         ATTACK,
         DEFENCE,
-        GENERATE_CHILD,
-        GENERATE_AND_EAT_CLOSE_FOOD
+        GENERATE_CHILD
     }
 
     public Cell onGenerateChild(Cell cell) {
@@ -75,10 +74,6 @@ public class CellActions {
         }
         square.closeFood = 0;
         square.calculateColor(true, gameSettings.getRenderSettings());
-    }
-
-    public void onGenerateAndEatCloseFood(Cell cell) {
-        cell.energy += 1;
     }
 
     public void teleportCell(Cell cell){

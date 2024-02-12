@@ -1,11 +1,11 @@
 package application.renders;
 
 import application.Cell;
+import application.Main;
 import application.keyController.Key;
 import application.keyController.KeyTitles;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 // класс, который определяет, что выдавать на экран при нажатии на паузу
 public class PauseRender {
@@ -22,17 +22,17 @@ public class PauseRender {
 
     // Показывает, какое текущее состояние игры (сколько клеток, какого цвета)
     public String getGameCondition(List<Cell> cellList) {
-        String gameCondition = "";
-        List<Cell> redCells = cellList.stream().filter(e -> e.name.equals("red")).toList();
-        List<Cell> blackCells = cellList.stream().filter(e -> e.name.equals("black")).toList();
-        List<Cell> greenCells = cellList.stream().filter(e -> e.name.equals("green")).toList();
-        List<Cell> blueCells = cellList.stream().filter(e -> e.name.equals("blue")).toList();
-        gameCondition = String.format("Красных клеток: %s\n" +
-                "Черных клеток: %s\n" +
-                "Синих клеток: %s\n" +
-                "Зеленых клеток: %s\n",
-                redCells.size(), blackCells.size(), blueCells.size(), greenCells.size());
-        return gameCondition;
+        Map<String, Integer> cellCountByColor = new HashMap<>();
+        cellList.forEach(cell -> {
+            cellCountByColor.merge(cell.name, 1, Integer::sum);
+        });
+        StringJoiner gameConditionJoiner = new StringJoiner("\n");
+        gameConditionJoiner.add("Текущее состояние игры");
+        gameConditionJoiner.add(String.format("Кадров отрисовано: %s", Main.currentTick));
+        cellCountByColor.forEach((color, count) -> {
+            gameConditionJoiner.add(String.format("Клеток цвета %s: %s", color, count));
+        });
+        return gameConditionJoiner.toString();
     }
 
     // Показывает статистику игры, сколько всего было клеток

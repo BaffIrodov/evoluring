@@ -43,7 +43,7 @@ public class Main extends Application {
     List<Cell> cellsToAdding = new ArrayList<>();
     public boolean isFoodAdding = false;
     public boolean isOnlyCloseAdding = false;
-    public int currentTick = 0;
+    public static int currentTick = 0;
     public long startGameMills = System.currentTimeMillis();
     private int realFrameCount = 1;
 
@@ -164,7 +164,6 @@ public class Main extends Application {
 ////            testCloseFoodInDistrict();
 //        }
             if (currentTick % 100 == 0) {
-//            isFoodAdding = !isFoodAdding;
                 System.out.println("time: " + (System.currentTimeMillis() - startGameMills)
                         + " size: " + cells.size() + " fps: " + (100000 / (System.currentTimeMillis() - startGameMills)));
                 startGameMills = System.currentTimeMillis();
@@ -234,9 +233,6 @@ public class Main extends Application {
                             case EAT_CLOSE_FOOD -> {
                                 currentSquare = getCurrentSquare(cell);
                                 cellActions.onEatCloseFood(cell, currentSquare);
-                            }
-                            case GENERATE_AND_EAT_CLOSE_FOOD -> {
-                                cellActions.onGenerateAndEatCloseFood(cell);
                             }
                         }
                         graphicsContext.setFill(cell.color);
