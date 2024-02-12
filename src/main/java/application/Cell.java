@@ -32,8 +32,8 @@ public class Cell {
         this.coordinates = coordinates;
         this.dna = dna;
         this.color = color;
-        getCountDnaGenesByTypeAndEnergyCost();
         actionMapGenerate();
+        getCountDnaGenesByTypeAndEnergyCost();
     }
 
     public void actionMapGenerate() {
@@ -137,18 +137,19 @@ public class Cell {
     }
 
     public void getCountDnaGenesByTypeAndEnergyCost() { //плата за сложность днк
-        this.attack = this.dna.dnaCode.length() * 2
-                - this.dna.dnaCode.replace("f", "").length()
-                - this.dna.dnaCode.replace("i", "").length();
-        this.defence = this.dna.dnaCode.length() * 2
-                - this.dna.dnaCode.replace("g", "").length()
-                - this.dna.dnaCode.replace("i", "").length();
-        int doNothingLength = this.dna.dnaCode.length() - this.dna.dnaCode.replace("o", "").length();
-        int moveLeftLength = this.dna.dnaCode.length() - this.dna.dnaCode.replace("a", "").length();
-        int moveRightLength = this.dna.dnaCode.length() - this.dna.dnaCode.replace("b", "").length();
-        int moveUpLength = this.dna.dnaCode.length() - this.dna.dnaCode.replace("c", "").length();
-        int moveDownLength = this.dna.dnaCode.length() - this.dna.dnaCode.replace("d", "").length();
-        int eatCloseLength = this.dna.dnaCode.length() - this.dna.dnaCode.replace("e", "").length();
+        char[] chars = this.dna.dnaCode.toCharArray();
+        Map<String, Integer> dnaCodeCountByName = new HashMap<>();
+        for (char aChar : chars) {
+            dnaCodeCountByName.merge(String.valueOf(aChar), 1, Integer::sum);
+        }
+        this.attack = Optional.ofNullable(dnaCodeCountByName.get("f")).orElse(0);
+        this.defence = Optional.ofNullable(dnaCodeCountByName.get("g")).orElse(0);
+        int doNothingLength = Optional.ofNullable(dnaCodeCountByName.get("o")).orElse(0);
+        int moveLeftLength = Optional.ofNullable(dnaCodeCountByName.get("a")).orElse(0);
+        int moveRightLength = Optional.ofNullable(dnaCodeCountByName.get("b")).orElse(0);
+        int moveUpLength = Optional.ofNullable(dnaCodeCountByName.get("c")).orElse(0);
+        int moveDownLength = Optional.ofNullable(dnaCodeCountByName.get("d")).orElse(0);
+        int eatCloseLength = Optional.ofNullable(dnaCodeCountByName.get("e")).orElse(0);
         this.energyCost = this.attack * energyCostSettings.attackPassiveCost
                 + this.defence * energyCostSettings.defencePassiveCost
                 + doNothingLength * energyCostSettings.doNothingPassiveCost

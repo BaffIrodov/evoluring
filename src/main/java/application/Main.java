@@ -280,7 +280,7 @@ public class Main extends Application {
         for (int i = 0; i < boardSettings.getWidth(); i++) {
             for (int j = 0; j < boardSettings.getHeight(); j++) {
                 squares.add(new Square(new Coordinates(i * boardSettings.getSquareSize(), j * boardSettings.getSquareSize()), 0, 0, new ArrayList<>()));
-                mapSquareCoordinatesToIndex.put((String.valueOf(i) + "|" + String.valueOf(j)), index);
+                mapSquareCoordinatesToIndex.put((i + "|" + j), index);
                 index++;
             }
         }
