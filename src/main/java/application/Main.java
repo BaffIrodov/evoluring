@@ -36,6 +36,7 @@ public class Main extends Application {
     static List<Square> squares = new ArrayList<>();
     static Map<String, Integer> mapSquareCoordinatesToIndex = new HashMap<>();
     static Map<Map<Integer, Integer>, Integer> foodsMap = new HashMap<>();
+    public static Map<String, CellActions.CellActionsNames> actionMap = new HashMap<>();
     static boolean gameOver = false;
     static boolean gameStoped = false;
     static Random rand = new Random();
@@ -139,6 +140,7 @@ public class Main extends Application {
             });
             // initialization playing field
             squareAdding();
+            actionMapGenerate();
 
 
 //            cellAdding();
@@ -291,6 +293,18 @@ public class Main extends Application {
         cells.add(new Cell("black", 1, 500, new Coordinates(450, 150), new DNA("bdh", 0), Color.BLACK));
         cells.add(new Cell("green", 1, 500, new Coordinates(150, 450), new DNA("cah", 0), Color.GREEN));
         cells.add(new Cell("blue", 1, 500, new Coordinates(450, 450), new DNA("dbh", 0), Color.BLUE));
+    }
+
+    public void actionMapGenerate() {
+        actionMap.put("o", CellActions.CellActionsNames.DO_NOTHING);
+        actionMap.put("a", CellActions.CellActionsNames.MOVE_LEFT);
+        actionMap.put("b", CellActions.CellActionsNames.MOVE_UP);
+        actionMap.put("c", CellActions.CellActionsNames.MOVE_RIGHT);
+        actionMap.put("d", CellActions.CellActionsNames.MOVE_DOWN);
+        actionMap.put("e", CellActions.CellActionsNames.EAT_CLOSE_FOOD);
+        actionMap.put("f", CellActions.CellActionsNames.ATTACK);
+        actionMap.put("g", CellActions.CellActionsNames.DEFENCE);
+        actionMap.put("h", CellActions.CellActionsNames.GENERATE_CHILD);
     }
 
     public void testFreeFoodInDistrict() {

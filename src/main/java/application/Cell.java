@@ -19,7 +19,6 @@ public class Cell {
     public Cell parentCell;
     public Cell childCell;
     public Color color;
-    public Map<String, CellActions.CellActionsNames> actionMap = new HashMap<>();
 
     GameSettings gameSettings = new GameSettings();
     BoardSettings boardSettings = gameSettings.getBoardSettings();
@@ -32,20 +31,7 @@ public class Cell {
         this.coordinates = coordinates;
         this.dna = dna;
         this.color = color;
-        actionMapGenerate();
         getCountDnaGenesByTypeAndEnergyCost();
-    }
-
-    public void actionMapGenerate() {
-        this.actionMap.put("o", CellActions.CellActionsNames.DO_NOTHING);
-        this.actionMap.put("a", CellActions.CellActionsNames.MOVE_LEFT);
-        this.actionMap.put("b", CellActions.CellActionsNames.MOVE_UP);
-        this.actionMap.put("c", CellActions.CellActionsNames.MOVE_RIGHT);
-        this.actionMap.put("d", CellActions.CellActionsNames.MOVE_DOWN);
-        this.actionMap.put("e", CellActions.CellActionsNames.EAT_CLOSE_FOOD);
-        this.actionMap.put("f", CellActions.CellActionsNames.ATTACK);
-        this.actionMap.put("g", CellActions.CellActionsNames.DEFENCE);
-        this.actionMap.put("h", CellActions.CellActionsNames.GENERATE_CHILD);
     }
 
     public CellActions.CellActionsNames getNextAction() {
@@ -57,11 +43,7 @@ public class Cell {
         }
         char nextActionInDNA = dnaCommands[dna.dnaCursor + 1];
         dna.dnaCursor++;
-        return this.actionMap.get(String.valueOf(nextActionInDNA));
-    }
-
-    public void pickDnaToAction(CellActions.CellActionsNames cellActionName, String dnaFragment) {
-        this.actionMap.put(dnaFragment, cellActionName);
+        return Main.actionMap.get(String.valueOf(nextActionInDNA));
     }
 
     public Cell generateChild(int squareSize) {
@@ -86,7 +68,7 @@ public class Cell {
 
     public String dnaGeneration(String dnaCode) {
         int countOfGenesToDeleting = 1;
-        List<String> geneList = actionMap.keySet().stream().toList();
+        List<String> geneList = Main.actionMap.keySet().stream().toList();
         String genesToAdding = "";
         Random rand = new Random();
         int countOfGenesToAdding = rand.nextInt(1, 5);
