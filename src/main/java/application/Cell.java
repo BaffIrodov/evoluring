@@ -39,7 +39,7 @@ public class Cell {
 
         int commandOverflow = dnaCommands.length;
         if (dna.dnaCursor + 1 == commandOverflow) {
-            dna.dnaCursor = -1;
+            dna.dnaCursor = 0;
         }
         char nextActionInDNA = dnaCommands[dna.dnaCursor + 1];
         dna.dnaCursor++;
@@ -112,8 +112,8 @@ public class Cell {
             }
         }
         */
-        if(result.length() > 30) {
-            result = result.substring(0, 30);
+        if(result.length() > 50) {
+            result = result.substring(0, 50);
         }
         return result;
     }
@@ -159,24 +159,18 @@ public class Cell {
     }
 
     public int validateX(int x){
-        int width = boardSettings.getWidth();
-        int squareSize = boardSettings.getSquareSize();
         if(x < 0){
-            x = (width-1)*(squareSize);
-        }
-        if(x >= width*squareSize){
+            x = (boardSettings.getWidth()-1)*(boardSettings.getSquareSize());
+        } else if(x >= boardSettings.getWidth()*boardSettings.getSquareSize()){
             x = 0;
         }
         return x;
     }
 
     public int validateY(int y){
-        int height = boardSettings.getHeight();
-        int squareSize = boardSettings.getSquareSize();
         if(y < 0){
-            y = (height-1)*(squareSize);
-        }
-        if(y >= height*squareSize){
+            y = (boardSettings.getHeight()-1)*(boardSettings.getSquareSize());
+        } else if(y >= boardSettings.getHeight()*boardSettings.getSquareSize()){
             y = 0;
         }
         return y;

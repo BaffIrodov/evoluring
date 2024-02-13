@@ -9,6 +9,7 @@ import application.renders.PauseRender;
 import application.settings.*;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
@@ -85,13 +86,40 @@ public class Main extends Application {
                 double realX = mouseEvent.getX() / boardSettings.getSquareSize();
                 double realY = mouseEvent.getY() / boardSettings.getSquareSize();
                 int index = mapSquareCoordinatesToIndex.get((int) realX + "|" + (int) realY);
-                Square square = squares.get(index);
-                if (square.frontGroundColor != Color.BLACK) {
-                    square.frontGroundColor = Color.BLACK;
-                } else {
-                    square.frontGroundColor = null;
+                Square currentSquare = squares.get(index);
+                // нажатие лкм
+                if (mouseEvent.getButton() == MouseButton.PRIMARY) {
+                    if (currentSquare.frontGroundColor != Color.BLACK) {
+                        currentSquare.frontGroundColor = Color.BLACK;
+                    } else {
+                        currentSquare.frontGroundColor = null;
+                    }
+                } else if (mouseEvent.getButton() == MouseButton.SECONDARY) {
+                    int explosionRange = 200;
+                    for (Square square : squares) {
+                        if (square.coordinates.x > (mouseEvent.getX() - explosionRange)
+                                && square.coordinates.x < (mouseEvent.getX() + explosionRange)
+                                && square.coordinates.y > (mouseEvent.getY() - explosionRange)
+                                && square.coordinates.y < (mouseEvent.getY() + explosionRange)) {
+                            square.items = new ArrayList<>();
+                            square.freeFood = 0;
+                            square.closeFood = 0;
+                            square.calculateColor(true, renderSettings);
+                        }
+                    }
+                    List<Cell> cellsToDelete = new ArrayList<>();
+                    for (Cell cell : cells) {
+                        if (cell.coordinates.x > (mouseEvent.getX() - explosionRange)
+                                && cell.coordinates.x < (mouseEvent.getX() + explosionRange)
+                                && cell.coordinates.y > (mouseEvent.getY() - explosionRange)
+                                && cell.coordinates.y < (mouseEvent.getY() + explosionRange)) {
+                            cellsToDelete.add(cell);
+                        }
+                    }
+                    cells.removeAll(cellsToDelete);
+                } else if (mouseEvent.getButton() == MouseButton.MIDDLE) {
+
                 }
-                int i = 0;
             });
             scene.addEventFilter(KeyEvent.KEY_PRESSED, key -> {
                 if (keyTitles.mapKeyByKeyCodes.containsKey(key.getCode())) {
@@ -159,6 +187,14 @@ public class Main extends Application {
 
     // tick
     public void tick(GraphicsContext graphicsContext) {
+        if (currentTick == 1100) {
+            gameStoped = true;
+            System.out.println("------- 1100 frames done ------");
+        }
+        if (currentTick < 50) {
+            isFoodAdding = true;
+            cellAdding();
+        }
         for (int i = 0; i < realFrameCount; i++) {
             currentTick++;
 //        if (currentTick % 100 == 0) {
@@ -166,9 +202,12 @@ public class Main extends Application {
 ////            testCloseFoodInDistrict();
 //        }
             if (currentTick % 100 == 0) {
+                // вернуть, как было
+//                System.out.println("time: " + (System.currentTimeMillis() - startGameMills)
+//                        + " size: " + cells.size() + " fps: " + (100000 / (System.currentTimeMillis() - startGameMills)));
                 System.out.println("time: " + (System.currentTimeMillis() - startGameMills)
-                        + " size: " + cells.size() + " fps: " + (100000 / (System.currentTimeMillis() - startGameMills)));
-                startGameMills = System.currentTimeMillis();
+                        + " size: " + cells.size());
+                //startGameMills = System.currentTimeMillis(); вернуть как было
             }
 
             if (!gameStoped) {
@@ -199,7 +238,7 @@ public class Main extends Application {
                         CellActions.CellActionsNames nextAction = cell.getNextAction();
                         switch (nextAction) {
                             case GENERATE_CHILD -> {
-                                if (cellGenerationSettings.generateByGene && cell.energy > cellGenerationSettings.costOfGenerationByFood) {
+                                if (cellGenerationSettings.generateByGene && cell.energy > cellGenerationSettings.costOfGenerationByGene) {
                                     Cell newCell = cellActions.onGenerateChild(cell);
                                     cellsToAdding.add(newCell);
                                     getCurrentSquare(newCell).addObjectToSquareItems(newCell);
@@ -289,10 +328,10 @@ public class Main extends Application {
     }
 
     public void cellAdding() {
-        cells.add(new Cell("red", 1, 500, new Coordinates(150, 150), new DNA("ach", 0), Color.RED));
-        cells.add(new Cell("black", 1, 500, new Coordinates(450, 150), new DNA("bdh", 0), Color.BLACK));
-        cells.add(new Cell("green", 1, 500, new Coordinates(150, 450), new DNA("cah", 0), Color.GREEN));
-        cells.add(new Cell("blue", 1, 500, new Coordinates(450, 450), new DNA("dbh", 0), Color.BLUE));
+        cells.add(new Cell("red", 1, 500, new Coordinates(150, 150), new DNA("ah", 0), Color.RED));
+        cells.add(new Cell("black", 1, 500, new Coordinates(450, 150), new DNA("bh", 0), Color.BLACK));
+        cells.add(new Cell("green", 1, 500, new Coordinates(150, 450), new DNA("ch", 0), Color.GREEN));
+        cells.add(new Cell("blue", 1, 500, new Coordinates(450, 450), new DNA("dh", 0), Color.BLUE));
     }
 
     public void actionMapGenerate() {

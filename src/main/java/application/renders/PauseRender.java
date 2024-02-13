@@ -35,11 +35,6 @@ public class PauseRender {
         return gameConditionJoiner.toString();
     }
 
-    // Показывает статистику игры, сколько всего было клеток
-    public String getGameStatistics() {
-        return "";
-    }
-
     // Показывает настройки игры
     public String getGameSettings() {
         return "";
