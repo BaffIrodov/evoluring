@@ -15,14 +15,16 @@ public class CellActions {
         MOVE_RIGHT,
         MOVE_UP,
         MOVE_DOWN,
-        WATCH,
         REPLICATE,
         EAT,
         EAT_CLOSE_FOOD,
         DNACHANGE,
         ATTACK,
         DEFENCE,
-        GENERATE_CHILD
+        GENERATE_CHILD,
+        // ИИ задатки
+        WATCH, //не ясно, надо ли
+        THINK // принять решение, куда двигаться
     }
 
     public Cell onGenerateChild(Cell cell) {

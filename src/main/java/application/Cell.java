@@ -8,18 +8,30 @@ import javafx.scene.paint.Color;
 import java.util.*;
 
 public class Cell {
+
+    // primary properties
     public String name;
-    public Integer generationNumber;
+    public Coordinates coordinates;
+    private EnvironmentState environmentState;
+
+    // energy state
     public Integer energy;
     public Integer energyCost;
+
+    // dna
     public DNA dna;
-    public Integer attack;
-    public Integer defence;
-    public Coordinates coordinates;
+
+    // secondary properties
+    public Integer generationNumber;
     public Cell parentCell;
     public Cell childCell;
     public Color color;
 
+    // passive skills
+    public Integer attack;
+    public Integer defence;
+
+    // dependencies
     GameSettings gameSettings = new GameSettings();
     BoardSettings boardSettings = gameSettings.getBoardSettings();
     EnergyCostSettings energyCostSettings = gameSettings.getCostSetting();
@@ -35,13 +47,11 @@ public class Cell {
     }
 
     public CellActions.CellActionsNames getNextAction() {
-        char[] dnaCommands = dna.dnaCode.toCharArray();
-
-        int commandOverflow = dnaCommands.length;
+        int commandOverflow = dna.dnaCode.length();
         if (dna.dnaCursor + 1 == commandOverflow) {
-            dna.dnaCursor = 0;
+            dna.dnaCursor = -1;
         }
-        char nextActionInDNA = dnaCommands[dna.dnaCursor + 1];
+        char nextActionInDNA = dna.dnaCode.charAt(dna.dnaCursor + 1);
         dna.dnaCursor++;
         return Main.actionMap.get(String.valueOf(nextActionInDNA));
     }
@@ -70,20 +80,19 @@ public class Cell {
         int countOfGenesToDeleting = 1;
         List<String> geneList = Main.actionMap.keySet().stream().toList();
         String genesToAdding = "";
-        Random rand = new Random();
-        int countOfGenesToAdding = rand.nextInt(1, 5);
+        int countOfGenesToAdding = Main.rand.nextInt(1, 5);
         if (countOfGenesToAdding > 1) {
-            countOfGenesToDeleting = rand.nextInt(1, countOfGenesToAdding);
+            countOfGenesToDeleting = Main.rand.nextInt(1, countOfGenesToAdding);
         }
         for (int i = 0; i < countOfGenesToAdding; i++) {
-            int nextGene = rand.nextInt(0, geneList.size());
+            int nextGene = Main.rand.nextInt(0, geneList.size());
             genesToAdding += geneList.get(nextGene);
         }
         String genesAfterAdding = dnaCode + genesToAdding;
         String result = "";
         for (int j = 0; j < countOfGenesToDeleting; j++) {
             result = "";
-            int index = rand.nextInt(genesAfterAdding.length() - 1);
+            int index = Main.rand.nextInt(genesAfterAdding.length() - 1);
             char[] genesAfterAddingArray = genesAfterAdding.toCharArray();
             for (int i = 0; i < genesAfterAddingArray.length; i++) {
                 if (i != index) {
@@ -92,26 +101,6 @@ public class Cell {
             }
             genesAfterAdding = result;
         }
-        /*
-        for (int i = 0; i < countOfGenesToAdding; i++) {
-            int nextGene = rand.nextInt(0, geneList.size());
-            genesToAdding += geneList.get(nextGene);
-        }
-        String genesAfterAdding = dnaCode + genesToAdding;
-        String result = "";
-        Map<Integer, Boolean> deletedGenesInIndexMap = new HashMap<>();
-        for (int j = 0; j < countOfGenesToDeleting; j++) {
-            Integer index = rand.nextInt(genesAfterAdding.length() - 1);
-            deletedGenesInIndexMap.put(index, true);
-        }
-        result = "";
-        char[] genesAfterAddingArray = genesAfterAdding.toCharArray();
-        for(int i = 0; i < genesAfterAdding.length()-1; i++) {
-            if(deletedGenesInIndexMap.get(i) == null) {
-                result += genesAfterAddingArray[i];
-            }
-        }
-        */
         if(result.length() > 50) {
             result = result.substring(0, 50);
         }
@@ -142,7 +131,7 @@ public class Cell {
                 + eatCloseLength * energyCostSettings.eatCloseFoodPassive;
     }
 
-    public Square getDimensionSquare(String dimension){
+    public Square get(String dimension){
         int coordinateX = 0;
         int coordinateY = 0;
         Square result = null;
