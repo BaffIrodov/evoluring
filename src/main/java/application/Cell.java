@@ -102,7 +102,7 @@ public class Cell {
             genesAfterAdding = result;
         }
         if(result.length() > 50) {
-            result = result.substring(0, 50);
+            result = result.substring(result.length() - 50);
         }
         return result;
     }
