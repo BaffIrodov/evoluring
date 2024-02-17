@@ -92,4 +92,16 @@ public class CellActions {
             cell.coordinates.y = 0;
         }
     }
+
+    public void actionMapGenerate() {
+        Main.actionMap.put("o", CellActions.CellActionsNames.DO_NOTHING);
+        Main.actionMap.put("a", CellActions.CellActionsNames.MOVE_LEFT);
+        Main.actionMap.put("b", CellActions.CellActionsNames.MOVE_UP);
+        Main.actionMap.put("c", CellActions.CellActionsNames.MOVE_RIGHT);
+        Main.actionMap.put("d", CellActions.CellActionsNames.MOVE_DOWN);
+        Main.actionMap.put("e", CellActions.CellActionsNames.EAT_CLOSE_FOOD);
+        Main.actionMap.put("f", CellActions.CellActionsNames.ATTACK);
+        Main.actionMap.put("g", CellActions.CellActionsNames.DEFENCE);
+        Main.actionMap.put("h", CellActions.CellActionsNames.GENERATE_CHILD);
+    }
 }

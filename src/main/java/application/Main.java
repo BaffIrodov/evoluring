@@ -2,7 +2,9 @@ package application;
 
 import java.util.*;
 
+import application.board.BoardActivities;
 import application.frontground.FrontGroundController;
+import application.handlers.KeyboardEventHandler;
 import application.keyController.Key;
 import application.keyController.KeyTitles;
 import application.renders.PauseRender;
@@ -29,25 +31,28 @@ public class Main extends Application {
     FoodAddingSettings foodAddingSettings = gameSettings.getFoodAddingSettings();
     CellGenerationSettings cellGenerationSettings = gameSettings.getCellGenerationSettings();
     RenderSettings renderSettings = gameSettings.getRenderSettings();
+    ApplicationSettings applicationSettings = gameSettings.getApplicationSettings();
     FrontGroundController frontGroundController = new FrontGroundController();
     CellActions cellActions = new CellActions();
     KeyTitles keyTitles = new KeyTitles();
     PauseRender pauseRender = new PauseRender();
-    static List<Cell> cells = new ArrayList<>();
-    static List<Square> squares = new ArrayList<>();
+    public static List<Cell> cells = new ArrayList<>();
+    public static List<Square> squares = new ArrayList<>();
     static Map<String, Integer> mapSquareCoordinatesToIndex = new HashMap<>();
     static Map<Map<Integer, Integer>, Integer> foodsMap = new HashMap<>();
     public static Map<String, CellActions.CellActionsNames> actionMap = new HashMap<>();
     static boolean gameOver = false;
-    static boolean gameStoped = false;
+    public static boolean gameStopped = false;
     static Random rand = new Random();
     List<Cell> cellsToDelete = new ArrayList<>();
     List<Cell> cellsToAdding = new ArrayList<>();
-    public boolean isFoodAdding = false;
-    public boolean isOnlyCloseAdding = false;
+    public static boolean isFoodAdding = false;
+    public static boolean isOnlyCloseAdding = false;
     public static int currentTick = 0;
     public long startGameMills = System.currentTimeMillis();
-    private int realFrameCount = 1;
+    public static int realFrameCount = 1;
+    KeyboardEventHandler keyboardEventHandler = new KeyboardEventHandler();
+    BoardActivities boardActivities = new BoardActivities();
 
     private int getRandPos(int number) {
         return new Random(number).nextInt();
@@ -121,54 +126,10 @@ public class Main extends Application {
 
                 }
             });
-            scene.addEventFilter(KeyEvent.KEY_PRESSED, key -> {
-                if (keyTitles.mapKeyByKeyCodes.containsKey(key.getCode())) {
-                    if (key.getCode() == KeyCode.SPACE) {
-                        gameStoped = !gameStoped;
-                        if (gameStoped) {
-                            if (renderSettings.pauseKeySettingsEnable || renderSettings.pauseGameConditionEnable) {
-                                if (renderSettings.pauseBackgroundEnable) {
-                                    graphicsContext.setFill(Color.color(0.9, 0.9, 0.9, 0.6));
-                                    graphicsContext.fillRect(0, 0, 600, 500);
-                                }
-                                graphicsContext.setFill(Color.BLACK);
-                                graphicsContext.setFont(new Font("", 16));
-                                String splitter = "\n----------------\n";
-                                String keyDescription = renderSettings.pauseKeySettingsEnable ?
-                                        pauseRender.getKeyDescriptions(keyTitles) : "";
-                                String gameCondition = renderSettings.pauseGameConditionEnable ?
-                                        pauseRender.getGameCondition(cells) : "";
-                                graphicsContext.fillText(keyDescription + splitter + gameCondition,
-                                        30, 30);
-                            }
-                        }
-                    }
-                    if (key.getCode() == KeyCode.UP) {
-                        cellAdding();
-                    }
-                    if (key.getCode() == KeyCode.LEFT) {
-                        isFoodAdding = !isFoodAdding;
-                    }
-                    if (key.getCode() == KeyCode.DOWN) {
-                        isOnlyCloseAdding = !isOnlyCloseAdding;
-                    }
-                    if (key.getCode() == KeyCode.RIGHT) {
-                        testFreeFoodInDistrict();
-                    }
-                    if (key.getCode() == KeyCode.DIGIT1) {
-                        this.realFrameCount = 1;
-                    }
-                    if (key.getCode() == KeyCode.DIGIT2) {
-                        this.realFrameCount = 2;
-                    }
-                    if (key.getCode() == KeyCode.DIGIT3) {
-                        this.realFrameCount = 10;
-                    }
-                }
-            });
+            keyboardEventHandler.handle(applicationSettings, renderSettings, scene, keyTitles, graphicsContext, pauseRender);
             // initialization playing field
             squareAdding();
-            actionMapGenerate();
+            cellActions.actionMapGenerate();
 
 
 //            cellAdding();
@@ -188,19 +149,15 @@ public class Main extends Application {
     // tick
     public void tick(GraphicsContext graphicsContext) {
         if (currentTick == 1100) {
-            gameStoped = true;
+            gameStopped = true;
             System.out.println("------- 1100 frames done ------");
         }
         if (currentTick < 50) {
             isFoodAdding = true;
-            cellAdding();
+            boardActivities.cellAdding();
         }
         for (int i = 0; i < realFrameCount; i++) {
             currentTick++;
-//        if (currentTick % 100 == 0) {
-////            testFreeFoodInDistrict();
-////            testCloseFoodInDistrict();
-//        }
             if (currentTick % 100 == 0) {
                 // вернуть, как было
 //                System.out.println("time: " + (System.currentTimeMillis() - startGameMills)
@@ -210,7 +167,7 @@ public class Main extends Application {
                 //startGameMills = System.currentTimeMillis(); вернуть как было
             }
 
-            if (!gameStoped) {
+            if (!gameStopped) {
                 Long now = System.currentTimeMillis();
 
                 if (isFoodAdding) {
@@ -325,73 +282,6 @@ public class Main extends Application {
                 index++;
             }
         }
-    }
-
-    public void cellAdding() {
-        cells.add(new Cell("red", 1, 500, new Coordinates(150, 150), new DNA("ah", 0), Color.RED));
-        cells.add(new Cell("black", 1, 500, new Coordinates(450, 150), new DNA("bh", 0), Color.BLACK));
-        cells.add(new Cell("green", 1, 500, new Coordinates(150, 450), new DNA("ch", 0), Color.GREEN));
-        cells.add(new Cell("blue", 1, 500, new Coordinates(450, 450), new DNA("dh", 0), Color.BLUE));
-    }
-
-    public void actionMapGenerate() {
-        actionMap.put("o", CellActions.CellActionsNames.DO_NOTHING);
-        actionMap.put("a", CellActions.CellActionsNames.MOVE_LEFT);
-        actionMap.put("b", CellActions.CellActionsNames.MOVE_UP);
-        actionMap.put("c", CellActions.CellActionsNames.MOVE_RIGHT);
-        actionMap.put("d", CellActions.CellActionsNames.MOVE_DOWN);
-        actionMap.put("e", CellActions.CellActionsNames.EAT_CLOSE_FOOD);
-        actionMap.put("f", CellActions.CellActionsNames.ATTACK);
-        actionMap.put("g", CellActions.CellActionsNames.DEFENCE);
-        actionMap.put("h", CellActions.CellActionsNames.GENERATE_CHILD);
-    }
-
-    public void testFreeFoodInDistrict() {
-        for (Square square : squares) {
-            if (square.coordinates.x >= 100 && square.coordinates.x <= 200 && square.coordinates.y >= 100 && square.coordinates.y <= 200) {
-                square.freeFood += 100;
-                square.calculateColor(true, gameSettings.getRenderSettings());
-            }
-            if (square.coordinates.x >= 200 && square.coordinates.x <= 400 && square.coordinates.y >= 140 && square.coordinates.y <= 160) {
-                square.freeFood += 100;
-                square.calculateColor(true, gameSettings.getRenderSettings());
-            }
-            if (square.coordinates.x >= 400 && square.coordinates.x <= 500 && square.coordinates.y >= 100 && square.coordinates.y <= 200) {
-                square.freeFood += 100;
-                square.calculateColor(true, gameSettings.getRenderSettings());
-            }
-            if (square.coordinates.x >= 200 && square.coordinates.x <= 400 && square.coordinates.y >= 440 && square.coordinates.y <= 460) {
-                square.freeFood += 100;
-                square.calculateColor(true, gameSettings.getRenderSettings());
-            }
-            if (square.coordinates.x >= 100 && square.coordinates.x <= 200 && square.coordinates.y >= 400 && square.coordinates.y <= 500) {
-                square.freeFood += 100;
-                square.calculateColor(true, gameSettings.getRenderSettings());
-            }
-            if (square.coordinates.x >= 440 && square.coordinates.x <= 460 && square.coordinates.y >= 200 && square.coordinates.y <= 400) {
-                square.freeFood += 100;
-                square.calculateColor(true, gameSettings.getRenderSettings());
-            }
-            if (square.coordinates.x >= 400 && square.coordinates.x <= 500 && square.coordinates.y >= 400 && square.coordinates.y <= 500) {
-                square.freeFood += 100;
-                square.calculateColor(true, gameSettings.getRenderSettings());
-            }
-            if (square.coordinates.x >= 140 && square.coordinates.x <= 160 && square.coordinates.y >= 200 && square.coordinates.y <= 400) {
-                square.freeFood += 100;
-                square.calculateColor(true, gameSettings.getRenderSettings());
-            }
-        }
-
-    }
-
-    public void testCloseFoodInDistrict() {
-        for (Square square : squares) {
-            if (square.coordinates.x >= 700 && square.coordinates.x <= 800) {
-                square.closeFood += 100;
-                square.calculateColor(true, gameSettings.getRenderSettings());
-            }
-        }
-
     }
 
     public void freeFoodAdding() {

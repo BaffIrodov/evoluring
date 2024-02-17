@@ -61,32 +61,32 @@ public class Square {
             this.freeFood = 0;
         }
         if (this.items.size() > 1) {
-            Map<String, Integer> mapAttackPlusDefenceByCellName = new HashMap<>();
-            Map<String, Integer> mapEnergyByCellName = new HashMap<>();
-            Map<String, Integer> mapCellCountByCellName = new HashMap<>();
+            Map<String, Integer> attackPlusDefenceByCellName = new HashMap<>();
+            Map<String, Integer> energyByCellName = new HashMap<>();
+            Map<String, Integer> cellCountByCellName = new HashMap<>();
             this.items.forEach(item -> {
                 Cell cell = (Cell) item;
-                mapAttackPlusDefenceByCellName.merge(cell.name, cell.attack + cell.defence, Integer::sum);
-                mapEnergyByCellName.merge(cell.name, cell.energy, Integer::sum);
-                mapCellCountByCellName.merge(cell.name, 1, Integer::sum);
+                attackPlusDefenceByCellName.merge(cell.name, cell.attack + cell.defence, Integer::sum);
+                energyByCellName.merge(cell.name, cell.energy, Integer::sum);
+                cellCountByCellName.merge(cell.name, 1, Integer::sum);
             });
-            if (mapAttackPlusDefenceByCellName.size() > 1) {
+            if (attackPlusDefenceByCellName.size() > 1) {
                 AtomicReference<String> nameOfStrongerCell = new AtomicReference<>("");
                 final Integer[] maxStrongOfCell = {-1};
-                mapAttackPlusDefenceByCellName.forEach((k, v) -> {
+                attackPlusDefenceByCellName.forEach((k, v) -> {
                     if (maxStrongOfCell[0] < v) {
                         maxStrongOfCell[0] = v;
                         nameOfStrongerCell.set(k);
                     }
                 });
                 AtomicReference<Integer> energySumOfLosers = new AtomicReference<>(0);
-                mapEnergyByCellName.forEach((k, v) -> {
+                energyByCellName.forEach((k, v) -> {
                     if (!Objects.equals(k, nameOfStrongerCell.get())) {
                         energySumOfLosers.updateAndGet(v1 -> v1 + v);
                     }
                 });
-                Integer cellIncrementAfterBattle = energySumOfLosers.get() / mapCellCountByCellName.get(nameOfStrongerCell.get());
-                Integer cellIncrementByFreeFoodAfterBattle = this.freeFood / mapCellCountByCellName.get(nameOfStrongerCell.get());
+                Integer cellIncrementAfterBattle = energySumOfLosers.get() / cellCountByCellName.get(nameOfStrongerCell.get());
+                Integer cellIncrementByFreeFoodAfterBattle = this.freeFood / cellCountByCellName.get(nameOfStrongerCell.get());
                 for (Object item : this.items) {
                     Cell cell = (Cell) item;
                     if (!Objects.equals(cell.name, nameOfStrongerCell.get())) {
@@ -99,7 +99,7 @@ public class Square {
                 this.freeFood = 0;
             } else {
                 AtomicReference<Integer> cellIncrementByFreeFoodAfterBattle = new AtomicReference<>(0);
-                mapCellCountByCellName.forEach((k, v) -> {
+                cellCountByCellName.forEach((k, v) -> {
                     cellIncrementByFreeFoodAfterBattle.set(this.freeFood / v);
                 });
                 for (Object item : this.items) {

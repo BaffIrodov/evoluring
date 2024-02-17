@@ -18,4 +18,5 @@ public class GameSettings {
         return new CellGenerationSettings();
     }
     public RenderSettings getRenderSettings() { return new RenderSettings(); }
+    public ApplicationSettings getApplicationSettings() { return new ApplicationSettings(); }
 }
