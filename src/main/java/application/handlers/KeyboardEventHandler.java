@@ -3,7 +3,6 @@ package application.handlers;
 import application.board.BoardActivities;
 import application.keyController.KeyTitles;
 import application.renders.PauseRender;
-import application.settings.*;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
@@ -17,9 +16,7 @@ public class KeyboardEventHandler {
 
     private final BoardActivities boardActivities = new BoardActivities();
 
-    public void handle(ApplicationSettings applicationSettings, BoardSettings boardSettings,
-                       RenderSettings renderSettings, EnergyCostSettings energyCostSettings,
-                       Scene scene, KeyTitles keyTitles,
+    public void handle(Scene scene, KeyTitles keyTitles,
                        GraphicsContext graphicsContext, PauseRender pauseRender) {
         if (applicationSettings.keyboardEventHandlerEnable) {
             scene.addEventFilter(KeyEvent.KEY_PRESSED, key -> {

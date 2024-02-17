@@ -5,6 +5,7 @@ import java.util.*;
 import application.board.BoardActivities;
 import application.frontground.FrontGroundController;
 import application.handlers.KeyboardEventHandler;
+import application.handlers.MouseEventHandler;
 import application.keyController.Key;
 import application.keyController.KeyTitles;
 import application.renders.PauseRender;
@@ -38,7 +39,7 @@ public class Main extends Application {
     PauseRender pauseRender = new PauseRender();
     public static List<Cell> cells = new ArrayList<>();
     public static List<Square> squares = new ArrayList<>();
-    static Map<String, Integer> mapSquareCoordinatesToIndex = new HashMap<>();
+    public static Map<String, Integer> mapSquareCoordinatesToIndex = new HashMap<>();
     static Map<Map<Integer, Integer>, Integer> foodsMap = new HashMap<>();
     public static Map<String, CellActions.CellActionsNames> actionMap = new HashMap<>();
     static boolean gameOver = false;
@@ -51,6 +52,7 @@ public class Main extends Application {
     public static int currentTick = 0;
     public long startGameMills = System.currentTimeMillis();
     public static int realFrameCount = 1;
+    MouseEventHandler mouseEventHandler = new MouseEventHandler();
     KeyboardEventHandler keyboardEventHandler = new KeyboardEventHandler();
     BoardActivities boardActivities = new BoardActivities();
 
@@ -87,47 +89,8 @@ public class Main extends Application {
             Scene scene = new Scene(root, boardSettings.getWidth() * boardSettings.getSquareSize(), boardSettings.getHeight() * boardSettings.getSquareSize());
 
             // control
-            scene.addEventFilter(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
-                double realX = mouseEvent.getX() / boardSettings.getSquareSize();
-                double realY = mouseEvent.getY() / boardSettings.getSquareSize();
-                int index = mapSquareCoordinatesToIndex.get((int) realX + "|" + (int) realY);
-                Square currentSquare = squares.get(index);
-                // нажатие лкм
-                if (mouseEvent.getButton() == MouseButton.PRIMARY) {
-                    if (currentSquare.frontGroundColor != Color.BLACK) {
-                        currentSquare.frontGroundColor = Color.BLACK;
-                    } else {
-                        currentSquare.frontGroundColor = null;
-                    }
-                } else if (mouseEvent.getButton() == MouseButton.SECONDARY) {
-                    int explosionRange = 200;
-                    for (Square square : squares) {
-                        if (square.coordinates.x > (mouseEvent.getX() - explosionRange)
-                                && square.coordinates.x < (mouseEvent.getX() + explosionRange)
-                                && square.coordinates.y > (mouseEvent.getY() - explosionRange)
-                                && square.coordinates.y < (mouseEvent.getY() + explosionRange)) {
-                            square.items = new ArrayList<>();
-                            square.freeFood = 0;
-                            square.closeFood = 0;
-                            square.calculateColor(true);
-                        }
-                    }
-                    List<Cell> cellsToDelete = new ArrayList<>();
-                    for (Cell cell : cells) {
-                        if (cell.coordinates.x > (mouseEvent.getX() - explosionRange)
-                                && cell.coordinates.x < (mouseEvent.getX() + explosionRange)
-                                && cell.coordinates.y > (mouseEvent.getY() - explosionRange)
-                                && cell.coordinates.y < (mouseEvent.getY() + explosionRange)) {
-                            cellsToDelete.add(cell);
-                        }
-                    }
-                    cells.removeAll(cellsToDelete);
-                } else if (mouseEvent.getButton() == MouseButton.MIDDLE) {
-
-                }
-            });
-            keyboardEventHandler.handle(applicationSettings, boardSettings, renderSettings, energyCostSettings,
-                    scene, keyTitles, graphicsContext, pauseRender);
+            mouseEventHandler.handle(scene);
+            keyboardEventHandler.handle(scene, keyTitles, graphicsContext, pauseRender);
             // initialization playing field
             squareAdding();
             cellActions.actionMapGenerate();
