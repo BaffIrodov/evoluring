@@ -109,7 +109,7 @@ public class Main extends Application {
                             square.items = new ArrayList<>();
                             square.freeFood = 0;
                             square.closeFood = 0;
-                            square.calculateColor(true, renderSettings);
+                            square.calculateColor(true);
                         }
                     }
                     List<Cell> cellsToDelete = new ArrayList<>();
@@ -266,7 +266,7 @@ public class Main extends Application {
                 }
                 for (Square square : squares) {
                     if (!square.items.isEmpty()) {
-                        square.calculateEating(cells, renderSettings);
+                        square.calculateEating(cells);
                     }
                 }
             }

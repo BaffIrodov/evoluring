@@ -7,6 +7,8 @@ import javafx.scene.paint.Color;
 
 import java.util.*;
 
+import static application.Main.*;
+
 public class Cell {
 
     // primary properties
@@ -31,20 +33,13 @@ public class Cell {
     public Integer attack;
     public Integer defence;
 
-    // dependencies
-    BoardSettings boardSettings;
-    EnergyCostSettings energyCostSettings;
-
-    public Cell(String name, Integer generationNumber, Integer energy, Coordinates coordinates, DNA dna, Color color,
-                BoardSettings boardSettings, EnergyCostSettings energyCostSettings) {
+    public Cell(String name, Integer generationNumber, Integer energy, Coordinates coordinates, DNA dna, Color color) {
         this.name = name;
         this.generationNumber = generationNumber;
         this.energy = energy;
         this.coordinates = coordinates;
         this.dna = dna;
         this.color = color;
-        this.boardSettings = boardSettings;
-        this.energyCostSettings = energyCostSettings;
         getCountDnaGenesByTypeAndEnergyCost();
     }
 
@@ -55,7 +50,7 @@ public class Cell {
         }
         char nextActionInDNA = dna.dnaCode.charAt(dna.dnaCursor + 1);
         dna.dnaCursor++;
-        return Main.actionMap.get(String.valueOf(nextActionInDNA));
+        return actionMap.get(String.valueOf(nextActionInDNA));
     }
 
     public Cell generateChild(int squareSize) {
@@ -68,9 +63,7 @@ public class Cell {
                 this.energy/2,
                 new Coordinates(this.coordinates.x + rangeX * squareSize, this.coordinates.y + rangeY * squareSize),
                 new DNA(this.dnaGeneration(this.dna.dnaCode), 0),
-                this.color,
-                this.boardSettings,
-                this.energyCostSettings);
+                this.color);
         newCell.parentCell = this;
         this.childCell = newCell;
         return newCell;
@@ -82,21 +75,21 @@ public class Cell {
 
     public String dnaGeneration(String dnaCode) {
         int countOfGenesToDeleting = 1;
-        List<String> geneList = Main.actionMap.keySet().stream().toList();
+        List<String> geneList = actionMap.keySet().stream().toList();
         String genesToAdding = "";
-        int countOfGenesToAdding = Main.rand.nextInt(1, 5);
+        int countOfGenesToAdding = rand.nextInt(1, 5);
         if (countOfGenesToAdding > 1) {
-            countOfGenesToDeleting = Main.rand.nextInt(1, countOfGenesToAdding);
+            countOfGenesToDeleting = rand.nextInt(1, countOfGenesToAdding);
         }
         for (int i = 0; i < countOfGenesToAdding; i++) {
-            int nextGene = Main.rand.nextInt(0, geneList.size());
+            int nextGene = rand.nextInt(0, geneList.size());
             genesToAdding += geneList.get(nextGene);
         }
         String genesAfterAdding = dnaCode + genesToAdding;
         String result = "";
         for (int j = 0; j < countOfGenesToDeleting; j++) {
             result = "";
-            int index = Main.rand.nextInt(genesAfterAdding.length() - 1);
+            int index = rand.nextInt(genesAfterAdding.length() - 1);
             char[] genesAfterAddingArray = genesAfterAdding.toCharArray();
             for (int i = 0; i < genesAfterAddingArray.length; i++) {
                 if (i != index) {
@@ -145,7 +138,7 @@ public class Cell {
                 coordinateY = this.coordinates.y;
                 coordinateX = validateX(coordinateX)/boardSettings.getSquareSize();
                 coordinateY = validateY(coordinateY)/boardSettings.getSquareSize();
-                result = Main.squares.get(Main.mapSquareCoordinatesToIndex.get((String.valueOf(coordinateX)) + "|" + (String.valueOf(coordinateY))));
+                result = squares.get(mapSquareCoordinatesToIndex.get((coordinateX) + "|" + coordinateY));
             }
         }
         return result;

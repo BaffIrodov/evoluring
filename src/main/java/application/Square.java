@@ -1,10 +1,11 @@
 package application;
 
-import application.settings.RenderSettings;
 import javafx.scene.paint.Color;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static application.Main.*;
 
 public class Square {
     public Coordinates coordinates;
@@ -25,7 +26,7 @@ public class Square {
         this.color = Color.color(1, 1, 1);
     }
 
-    public void calculateColor(Boolean forceCalculate, RenderSettings renderSettings) {
+    public void calculateColor(Boolean forceCalculate) {
         if (renderSettings.isCalculatingColor) {
             if (freeFood != freeFoodOnLastFrame || forceCalculate) {
                 float freeFood = (float) this.freeFood;
@@ -54,7 +55,7 @@ public class Square {
         }
     }
 
-    public void calculateEating(List<Cell> cells, RenderSettings renderSettings) { //тут сразу все методы - свободная еда, закрытая, сражения
+    public void calculateEating(List<Cell> cells) { //тут сразу все методы - свободная еда, закрытая, сражения
         if (this.items.size() == 1) { //обсчитываем свободную или закрытую еду и всё
             Cell cell = (Cell) this.items.get(0);
             cell.energy += this.freeFood;
@@ -109,7 +110,7 @@ public class Square {
                 this.freeFood = 0;
             }
         }
-        calculateColor(true, renderSettings);
+        calculateColor(true);
     }
 
     public void addObjectToSquareItems(Object object) {

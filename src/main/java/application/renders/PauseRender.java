@@ -1,11 +1,15 @@
 package application.renders;
 
 import application.Cell;
-import application.Main;
 import application.keyController.Key;
 import application.keyController.KeyTitles;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.StringJoiner;
+
+import static application.Main.currentTick;
 
 // класс, который определяет, что выдавать на экран при нажатии на паузу
 public class PauseRender {
@@ -28,7 +32,7 @@ public class PauseRender {
         });
         StringJoiner gameConditionJoiner = new StringJoiner("\n");
         gameConditionJoiner.add("Текущее состояние игры");
-        gameConditionJoiner.add(String.format("Кадров отрисовано: %s", Main.currentTick));
+        gameConditionJoiner.add(String.format("Кадров отрисовано: %s", currentTick));
         cellCountByColor.forEach((color, count) -> {
             gameConditionJoiner.add(String.format("Клеток цвета %s: %s", color, count));
         });
