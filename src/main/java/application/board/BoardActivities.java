@@ -1,17 +1,19 @@
 package application.board;
 
 import application.*;
+import application.settings.BoardSettings;
+import application.settings.EnergyCostSettings;
 import application.settings.GameSettings;
 import application.settings.RenderSettings;
 import javafx.scene.paint.Color;
 
 public class BoardActivities {
 
-    public void cellAdding() {
-        Main.cells.add(new Cell("red", 1, 500, new Coordinates(150, 150), new DNA("ah", 0), Color.RED));
-        Main.cells.add(new Cell("black", 1, 500, new Coordinates(450, 150), new DNA("bh", 0), Color.BLACK));
-        Main.cells.add(new Cell("green", 1, 500, new Coordinates(150, 450), new DNA("ch", 0), Color.GREEN));
-        Main.cells.add(new Cell("blue", 1, 500, new Coordinates(450, 450), new DNA("dh", 0), Color.BLUE));
+    public void cellAdding(BoardSettings boardSettings, EnergyCostSettings energyCostSettings) {
+        Main.cells.add(new Cell("red", 1, 500, new Coordinates(150, 150), new DNA("ah", 0), Color.RED, boardSettings, energyCostSettings));
+        Main.cells.add(new Cell("black", 1, 500, new Coordinates(450, 150), new DNA("bh", 0), Color.BLACK, boardSettings, energyCostSettings));
+        Main.cells.add(new Cell("green", 1, 500, new Coordinates(150, 450), new DNA("ch", 0), Color.GREEN, boardSettings, energyCostSettings));
+        Main.cells.add(new Cell("blue", 1, 500, new Coordinates(450, 450), new DNA("dh", 0), Color.BLUE, boardSettings, energyCostSettings));
     }
 
     public void addFreeFoodInDistrict(RenderSettings renderSettings) {

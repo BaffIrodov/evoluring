@@ -126,7 +126,8 @@ public class Main extends Application {
 
                 }
             });
-            keyboardEventHandler.handle(applicationSettings, renderSettings, scene, keyTitles, graphicsContext, pauseRender);
+            keyboardEventHandler.handle(applicationSettings, boardSettings, renderSettings, energyCostSettings,
+                    scene, keyTitles, graphicsContext, pauseRender);
             // initialization playing field
             squareAdding();
             cellActions.actionMapGenerate();
@@ -154,7 +155,7 @@ public class Main extends Application {
         }
         if (currentTick < 50) {
             isFoodAdding = true;
-            boardActivities.cellAdding();
+            boardActivities.cellAdding(boardSettings, energyCostSettings);
         }
         for (int i = 0; i < realFrameCount; i++) {
             currentTick++;
@@ -266,7 +267,7 @@ public class Main extends Application {
                 }
                 for (Square square : squares) {
                     if (!square.items.isEmpty()) {
-                        square.calculateEating(cells, gameSettings.getRenderSettings());
+                        square.calculateEating(cells, renderSettings);
                     }
                 }
             }
@@ -290,7 +291,7 @@ public class Main extends Application {
             Square randomSquare = squares.get(randomSquareIndex);
             randomSquare.freeFoodOnLastFrame = randomSquare.freeFood;
             randomSquare.freeFood += foodAddingSettings.freeEatAddingByEveryTick;
-            randomSquare.calculateColor(false, gameSettings.getRenderSettings());
+            randomSquare.calculateColor(false, renderSettings);
         }
     }
 
@@ -300,7 +301,7 @@ public class Main extends Application {
             Square randomSquare = squares.get(randomSquareIndex);
             randomSquare.closeFoodOnLastFrame = randomSquare.closeFood;
             randomSquare.closeFood += foodAddingSettings.closeEatAddingByEveryTick;
-            randomSquare.calculateColor(false, gameSettings.getRenderSettings());
+            randomSquare.calculateColor(false, renderSettings);
         }
     }
 

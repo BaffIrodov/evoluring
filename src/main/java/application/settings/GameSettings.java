@@ -2,6 +2,8 @@ package application.settings;
 
 public class GameSettings {
 
+    //todo надо поменять - не делать new, но сделать как поля
+
     public BoardSettings getBoardSettings() {
         return new BoardSettings();
     }

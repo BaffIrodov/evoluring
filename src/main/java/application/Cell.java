@@ -32,17 +32,19 @@ public class Cell {
     public Integer defence;
 
     // dependencies
-    GameSettings gameSettings = new GameSettings();
-    BoardSettings boardSettings = gameSettings.getBoardSettings();
-    EnergyCostSettings energyCostSettings = gameSettings.getCostSetting();
+    BoardSettings boardSettings;
+    EnergyCostSettings energyCostSettings;
 
-    public Cell(String name, Integer generationNumber, Integer energy, Coordinates coordinates, DNA dna, Color color) {
+    public Cell(String name, Integer generationNumber, Integer energy, Coordinates coordinates, DNA dna, Color color,
+                BoardSettings boardSettings, EnergyCostSettings energyCostSettings) {
         this.name = name;
         this.generationNumber = generationNumber;
         this.energy = energy;
         this.coordinates = coordinates;
         this.dna = dna;
         this.color = color;
+        this.boardSettings = boardSettings;
+        this.energyCostSettings = energyCostSettings;
         getCountDnaGenesByTypeAndEnergyCost();
     }
 
@@ -66,7 +68,9 @@ public class Cell {
                 this.energy/2,
                 new Coordinates(this.coordinates.x + rangeX * squareSize, this.coordinates.y + rangeY * squareSize),
                 new DNA(this.dnaGeneration(this.dna.dnaCode), 0),
-                this.color);
+                this.color,
+                this.boardSettings,
+                this.energyCostSettings);
         newCell.parentCell = this;
         this.childCell = newCell;
         return newCell;

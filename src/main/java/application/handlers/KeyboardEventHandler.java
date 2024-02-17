@@ -4,9 +4,7 @@ import application.Main;
 import application.board.BoardActivities;
 import application.keyController.KeyTitles;
 import application.renders.PauseRender;
-import application.settings.ApplicationSettings;
-import application.settings.GameSettings;
-import application.settings.RenderSettings;
+import application.settings.*;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
@@ -18,8 +16,9 @@ public class KeyboardEventHandler {
 
     private final BoardActivities boardActivities = new BoardActivities();
 
-    public void handle(ApplicationSettings applicationSettings,
-                       RenderSettings renderSettings, Scene scene, KeyTitles keyTitles,
+    public void handle(ApplicationSettings applicationSettings, BoardSettings boardSettings,
+                       RenderSettings renderSettings, EnergyCostSettings energyCostSettings,
+                       Scene scene, KeyTitles keyTitles,
                        GraphicsContext graphicsContext, PauseRender pauseRender) {
         if (applicationSettings.keyboardEventHandlerEnable) {
             scene.addEventFilter(KeyEvent.KEY_PRESSED, key -> {
@@ -45,7 +44,7 @@ public class KeyboardEventHandler {
                         }
                     }
                     if (key.getCode() == KeyCode.UP) {
-                        boardActivities.cellAdding();
+                        boardActivities.cellAdding(boardSettings, energyCostSettings);
                     }
                     if (key.getCode() == KeyCode.LEFT) {
                         Main.isFoodAdding = !Main.isFoodAdding;
