@@ -25,13 +25,13 @@ import javafx.scene.text.Font;
 
 public class Main extends Application {
 
-    GameSettings gameSettings = new GameSettings();
-    BoardSettings boardSettings = gameSettings.getBoardSettings();
-    EnergyCostSettings energyCostSettings = gameSettings.getCostSetting();
-    FoodAddingSettings foodAddingSettings = gameSettings.getFoodAddingSettings();
-    CellGenerationSettings cellGenerationSettings = gameSettings.getCellGenerationSettings();
-    RenderSettings renderSettings = gameSettings.getRenderSettings();
-    ApplicationSettings applicationSettings = gameSettings.getApplicationSettings();
+    public static GameSettings gameSettings = new GameSettings();
+    public static BoardSettings boardSettings = gameSettings.boardSettings;
+    public static EnergyCostSettings energyCostSettings = gameSettings.energyCostSettings;
+    public static FoodAddingSettings foodAddingSettings = gameSettings.foodAddingSettings;
+    public static CellGenerationSettings cellGenerationSettings = gameSettings.cellGenerationSettings;
+    public static RenderSettings renderSettings = gameSettings.renderSettings;
+    public static ApplicationSettings applicationSettings = gameSettings.applicationSettings;
     FrontGroundController frontGroundController = new FrontGroundController();
     CellActions cellActions = new CellActions();
     KeyTitles keyTitles = new KeyTitles();
@@ -43,7 +43,7 @@ public class Main extends Application {
     public static Map<String, CellActions.CellActionsNames> actionMap = new HashMap<>();
     static boolean gameOver = false;
     public static boolean gameStopped = false;
-    static Random rand = new Random();
+    public static Random rand = new Random();
     List<Cell> cellsToDelete = new ArrayList<>();
     List<Cell> cellsToAdding = new ArrayList<>();
     public static boolean isFoodAdding = false;
@@ -150,12 +150,11 @@ public class Main extends Application {
     // tick
     public void tick(GraphicsContext graphicsContext) {
         if (currentTick == 1100) {
-            gameStopped = true;
             System.out.println("------- 1100 frames done ------");
         }
         if (currentTick < 50) {
             isFoodAdding = true;
-            boardActivities.cellAdding(boardSettings, energyCostSettings);
+            boardActivities.cellAdding();
         }
         for (int i = 0; i < realFrameCount; i++) {
             currentTick++;
@@ -172,12 +171,12 @@ public class Main extends Application {
                 Long now = System.currentTimeMillis();
 
                 if (isFoodAdding) {
-                    freeFoodAdding();
-                    closeFoodAdding();
+                    boardActivities.freeFoodAdding();
+                    boardActivities.closeFoodAdding();
                 }
 
                 if (isOnlyCloseAdding) {
-                    closeFoodAdding();
+                    boardActivities.closeFoodAdding();
                 }
 
                 for (Square square : squares) { //отрисовка квадратиков
@@ -282,26 +281,6 @@ public class Main extends Application {
                 mapSquareCoordinatesToIndex.put((i + "|" + j), index);
                 index++;
             }
-        }
-    }
-
-    public void freeFoodAdding() {
-        for (int i = 0; i < foodAddingSettings.freeFoodAddingRate; i++) {
-            int randomSquareIndex = rand.nextInt(squares.size() - 1);
-            Square randomSquare = squares.get(randomSquareIndex);
-            randomSquare.freeFoodOnLastFrame = randomSquare.freeFood;
-            randomSquare.freeFood += foodAddingSettings.freeEatAddingByEveryTick;
-            randomSquare.calculateColor(false, renderSettings);
-        }
-    }
-
-    public void closeFoodAdding() {
-        for (int i = 0; i < foodAddingSettings.closeFoodAddingRate; i++) {
-            int randomSquareIndex = rand.nextInt(squares.size() - 1);
-            Square randomSquare = squares.get(randomSquareIndex);
-            randomSquare.closeFoodOnLastFrame = randomSquare.closeFood;
-            randomSquare.closeFood += foodAddingSettings.closeEatAddingByEveryTick;
-            randomSquare.calculateColor(false, renderSettings);
         }
     }
 

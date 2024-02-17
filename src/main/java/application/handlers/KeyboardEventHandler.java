@@ -44,7 +44,7 @@ public class KeyboardEventHandler {
                         }
                     }
                     if (key.getCode() == KeyCode.UP) {
-                        boardActivities.cellAdding(boardSettings, energyCostSettings);
+                        boardActivities.cellAdding();
                     }
                     if (key.getCode() == KeyCode.LEFT) {
                         Main.isFoodAdding = !Main.isFoodAdding;
@@ -53,7 +53,7 @@ public class KeyboardEventHandler {
                         Main.isOnlyCloseAdding = !Main.isOnlyCloseAdding;
                     }
                     if (key.getCode() == KeyCode.RIGHT) {
-                        boardActivities.addFreeFoodInDistrict(renderSettings);
+                        boardActivities.addFreeFoodInDistrict();
                     }
                     if (key.getCode() == KeyCode.DIGIT1) {
                         Main.realFrameCount = 1;

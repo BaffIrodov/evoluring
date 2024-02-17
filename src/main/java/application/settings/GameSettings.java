@@ -2,23 +2,19 @@ package application.settings;
 
 public class GameSettings {
 
-    //todo надо поменять - не делать new, но сделать как поля
+    public BoardSettings boardSettings;
+    public EnergyCostSettings energyCostSettings;
+    public FoodAddingSettings foodAddingSettings;
+    public CellGenerationSettings cellGenerationSettings;
+    public RenderSettings renderSettings;
+    public ApplicationSettings applicationSettings;
 
-    public BoardSettings getBoardSettings() {
-        return new BoardSettings();
+    public GameSettings() {
+        this.boardSettings = new BoardSettings();
+        this.energyCostSettings = new EnergyCostSettings();
+        this.foodAddingSettings = new FoodAddingSettings();
+        this.cellGenerationSettings = new CellGenerationSettings();
+        this.renderSettings = new RenderSettings();
+        this.applicationSettings = new ApplicationSettings();
     }
-
-    public EnergyCostSettings getCostSetting() {
-        return new EnergyCostSettings();
-    }
-
-    public FoodAddingSettings getFoodAddingSettings() {
-        return new FoodAddingSettings();
-    }
-
-    public CellGenerationSettings getCellGenerationSettings() {
-        return new CellGenerationSettings();
-    }
-    public RenderSettings getRenderSettings() { return new RenderSettings(); }
-    public ApplicationSettings getApplicationSettings() { return new ApplicationSettings(); }
 }

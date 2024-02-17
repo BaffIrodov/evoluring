@@ -3,12 +3,14 @@ package application;
 import application.settings.BoardSettings;
 import application.settings.EnergyCostSettings;
 import application.settings.GameSettings;
+import application.settings.RenderSettings;
 
 public class CellActions {
 
     GameSettings gameSettings = new GameSettings();
-    BoardSettings boardSettings = gameSettings.getBoardSettings();
-    EnergyCostSettings energyCostSettings = gameSettings.getCostSetting();
+    BoardSettings boardSettings = gameSettings.boardSettings;
+    EnergyCostSettings energyCostSettings = gameSettings.energyCostSettings;
+    RenderSettings renderSettings = gameSettings.renderSettings;
     public enum CellActionsNames {
         DO_NOTHING,
         MOVE_LEFT,
@@ -75,7 +77,7 @@ public class CellActions {
             cell.energy -= energyCostSettings.eatCloseFoodActive;
         }
         square.closeFood = 0;
-        square.calculateColor(true, gameSettings.getRenderSettings());
+        square.calculateColor(true, this.renderSettings);
     }
 
     public void teleportCell(Cell cell){
