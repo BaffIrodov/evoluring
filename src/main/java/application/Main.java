@@ -3,26 +3,22 @@ package application;
 import java.util.*;
 
 import application.board.BoardActivities;
+import application.cell.Cell;
+import application.cell.CellActions;
+import application.cell.CellActivities;
 import application.frontground.FrontGroundController;
 import application.handlers.KeyboardEventHandler;
 import application.handlers.MouseEventHandler;
-import application.keyController.Key;
 import application.keyController.KeyTitles;
 import application.renders.PauseRender;
 import application.settings.*;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 
 public class Main extends Application {
 
@@ -34,7 +30,7 @@ public class Main extends Application {
     public static RenderSettings renderSettings = gameSettings.renderSettings;
     public static ApplicationSettings applicationSettings = gameSettings.applicationSettings;
     FrontGroundController frontGroundController = new FrontGroundController();
-    CellActions cellActions = new CellActions();
+    public static CellActions cellActions = new CellActions();
     KeyTitles keyTitles = new KeyTitles();
     PauseRender pauseRender = new PauseRender();
     public static List<Cell> cells = new ArrayList<>();
@@ -45,8 +41,8 @@ public class Main extends Application {
     static boolean gameOver = false;
     public static boolean gameStopped = false;
     public static Random rand = new Random();
-    List<Cell> cellsToDelete = new ArrayList<>();
-    List<Cell> cellsToAdding = new ArrayList<>();
+    public static List<Cell> cellsToDelete = new ArrayList<>();
+    public static List<Cell> cellsToAdding = new ArrayList<>();
     public static boolean isFoodAdding = false;
     public static boolean isOnlyCloseAdding = false;
     public static int currentTick = 0;
@@ -55,6 +51,7 @@ public class Main extends Application {
     MouseEventHandler mouseEventHandler = new MouseEventHandler();
     KeyboardEventHandler keyboardEventHandler = new KeyboardEventHandler();
     BoardActivities boardActivities = new BoardActivities();
+    CellActivities cellActivities = new CellActivities();
 
     private int getRandPos(int number) {
         return new Random(number).nextInt();
@@ -69,7 +66,6 @@ public class Main extends Application {
 
             new AnimationTimer() {
                 long lastTick = 0;
-                int index = 0;
 
                 public void handle(long now) {
                     if (lastTick == 0) {
@@ -95,13 +91,6 @@ public class Main extends Application {
             squareAdding();
             cellActions.actionMapGenerate();
 
-
-//            cellAdding();
-
-
-            //food adding
-            //If you do not want to use css style, you can just delete the next line.
-            scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
             primaryStage.setScene(scene);
             primaryStage.setTitle("EVOLURING");
             primaryStage.show();
@@ -125,9 +114,9 @@ public class Main extends Application {
                 // вернуть, как было
 //                System.out.println("time: " + (System.currentTimeMillis() - startGameMills)
 //                        + " size: " + cells.size() + " fps: " + (100000 / (System.currentTimeMillis() - startGameMills)));
+                //startGameMills = System.currentTimeMillis(); вернуть как было
                 System.out.println("time: " + (System.currentTimeMillis() - startGameMills)
                         + " size: " + cells.size());
-                //startGameMills = System.currentTimeMillis(); вернуть как было
             }
 
             if (!gameStopped) {
@@ -147,64 +136,7 @@ public class Main extends Application {
                     graphicsContext.fillRect(square.coordinates.x, square.coordinates.y, boardSettings.getSquareSize(), boardSettings.getSquareSize());
                 }
                 for (Cell cell : cells) {
-                    boolean isDeath = cell.checkIfDeath();
-                    if (!isDeath) {
-                        Square currentSquare = getCurrentSquare(cell);
-                        if (cellGenerationSettings.generateByFood) {
-                            if (cell.energy > cellGenerationSettings.costOfGenerationByFood) {
-                                cellsToAdding.add(cell.generateChild(boardSettings.getSquareSize()));
-                            }
-                        }
-                        CellActions.CellActionsNames nextAction = cell.getNextAction();
-                        switch (nextAction) {
-                            case GENERATE_CHILD -> {
-                                if (cellGenerationSettings.generateByGene && cell.energy > cellGenerationSettings.costOfGenerationByGene) {
-                                    Cell newCell = cellActions.onGenerateChild(cell);
-                                    cellsToAdding.add(newCell);
-                                    getCurrentSquare(newCell).addObjectToSquareItems(newCell);
-                                }
-                            }
-                            case DO_NOTHING -> {
-                                cellActions.onDoNothing(cell);
-                            }
-                            case MOVE_LEFT -> {
-                                currentSquare.removeObjectFromSquareItems(cell);
-                                cellActions.onMoveLeft(cell);
-                                currentSquare = getCurrentSquare(cell);
-                                currentSquare.addObjectToSquareItems(cell);
-                            }
-                            case MOVE_RIGHT -> {
-                                currentSquare.removeObjectFromSquareItems(cell);
-                                cellActions.onMoveRight(cell);
-                                currentSquare = getCurrentSquare(cell);
-                                currentSquare.addObjectToSquareItems(cell);
-                            }
-                            case MOVE_DOWN -> {
-                                currentSquare.removeObjectFromSquareItems(cell);
-                                cellActions.onMoveDown(cell);
-                                currentSquare = getCurrentSquare(cell);
-                                currentSquare.addObjectToSquareItems(cell);
-                            }
-                            case MOVE_UP -> {
-                                currentSquare.removeObjectFromSquareItems(cell);
-                                cellActions.onMoveUp(cell);
-                                currentSquare = getCurrentSquare(cell);
-                                currentSquare.addObjectToSquareItems(cell);
-                            }
-                            case EAT_CLOSE_FOOD -> {
-                                currentSquare = getCurrentSquare(cell);
-                                cellActions.onEatCloseFood(cell, currentSquare);
-                            }
-                        }
-                        graphicsContext.setFill(cell.color);
-                        graphicsContext.fillRect(cell.coordinates.x, cell.coordinates.y, boardSettings.getSquareSize() /*- 1*/, boardSettings.getSquareSize() /*- 1*/);
-                        if (energyCostSettings.isConsiderPassiveCost) {
-                            cell.energy -= cell.energyCost;
-                        }
-                        cell.energy--;
-                    } else {
-                        cellsToDelete.add(cell);
-                    }
+                    cellActivities.cellTick(cell, graphicsContext);
                 }
                 for (Square square : squares) { //отрисовка квадратиков
                     if (square.frontGroundColor != null) {
@@ -215,6 +147,7 @@ public class Main extends Application {
 //                frontGroundController.renderQRCode(cells);
                 if (!cellsToDelete.isEmpty()) {
                     cellsToDelete.forEach(e -> {
+                        //todo надо мапу: удаленный - текущий квадратик
                         getCurrentSquare(e).removeObjectFromSquareItems(e);
                         cells.remove(e);
                     });
@@ -223,6 +156,7 @@ public class Main extends Application {
                 if (!cellsToAdding.isEmpty()) {
                     cellsToAdding.forEach(e -> {
                         cells.add(e);
+                        //todo надо мапу: добавленный - текущий квадратик
                         getCurrentSquare(e).addObjectToSquareItems(e);
                     });
                     cellsToAdding = new ArrayList<>();

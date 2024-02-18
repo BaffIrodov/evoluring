@@ -1,8 +1,9 @@
-package application;
+package application.cell;
 
-import application.settings.BoardSettings;
-import application.settings.EnergyCostSettings;
-import application.settings.GameSettings;
+import application.Coordinates;
+import application.DNA;
+import application.EnvironmentState;
+import application.Square;
 import javafx.scene.paint.Color;
 
 import java.util.*;
@@ -160,5 +161,18 @@ public class Cell {
             y = 0;
         }
         return y;
+    }
+
+    public Square getCurrentSquare() {
+        int realXCoordinate = this.coordinates.x / boardSettings.getSquareSize();
+        int realYCoordinate = this.coordinates.y / boardSettings.getSquareSize();
+        if (mapSquareCoordinatesToIndex.get(realXCoordinate
+                + "|" + realYCoordinate) == null) {
+            cellActions.teleportCell(this);
+            realXCoordinate = this.coordinates.x / boardSettings.getSquareSize();
+            realYCoordinate = this.coordinates.y / boardSettings.getSquareSize();
+        }
+        return squares.get(mapSquareCoordinatesToIndex.get(realXCoordinate
+                + "|" + realYCoordinate));
     }
 }

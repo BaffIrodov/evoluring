@@ -1,6 +1,6 @@
 package application.frontground;
 
-import application.Cell;
+import application.cell.Cell;
 
 import java.util.List;
 

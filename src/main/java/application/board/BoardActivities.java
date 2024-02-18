@@ -1,9 +1,9 @@
 package application.board;
 
-import application.Cell;
+import application.Square;
+import application.cell.Cell;
 import application.Coordinates;
 import application.DNA;
-import application.Square;
 import javafx.scene.paint.Color;
 
 import static application.Main.*;

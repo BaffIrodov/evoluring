@@ -9,4 +9,8 @@ module com.example.demo1 {
     opens application to javafx.fxml;
     exports application.settings;
     opens application.settings to javafx.fxml;
+    exports application.cell;
+    opens application.cell to javafx.fxml;
+    exports application.board;
+    opens application.board to javafx.fxml;
 }

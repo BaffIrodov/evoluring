@@ -1,6 +1,6 @@
 package application.renders;
 
-import application.Cell;
+import application.cell.Cell;
 import application.keyController.Key;
 import application.keyController.KeyTitles;
 

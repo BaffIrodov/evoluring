@@ -1,6 +1,6 @@
 package application.handlers;
 
-import application.Cell;
+import application.cell.Cell;
 import application.Square;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseButton;

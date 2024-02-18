@@ -1,4 +1,6 @@
-package application;
+package application.cell;
+
+import application.Square;
 
 import static application.Main.*;
 

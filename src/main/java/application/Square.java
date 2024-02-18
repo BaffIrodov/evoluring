@@ -1,5 +1,7 @@
 package application;
 
+import application.Coordinates;
+import application.cell.Cell;
 import javafx.scene.paint.Color;
 
 import java.util.*;
