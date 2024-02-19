@@ -6,6 +6,7 @@ import application.board.BoardActivities;
 import application.cell.Cell;
 import application.cell.CellActions;
 import application.cell.CellActivities;
+import application.cell.CellActivitiesThread;
 import application.frontground.FrontGroundController;
 import application.handlers.KeyboardEventHandler;
 import application.handlers.MouseEventHandler;
@@ -34,6 +35,8 @@ public class Main extends Application {
     KeyTitles keyTitles = new KeyTitles();
     PauseRender pauseRender = new PauseRender();
     public static List<Cell> cells = new ArrayList<>();
+    public static List<Cell> cells1 = new ArrayList<>();
+    public static List<Cell> cells2 = new ArrayList<>();
     public static List<Square> squares = new ArrayList<>();
     public static Map<String, Integer> mapSquareCoordinatesToIndex = new HashMap<>();
     static Map<Map<Integer, Integer>, Integer> foodsMap = new HashMap<>();
@@ -135,9 +138,26 @@ public class Main extends Application {
                     graphicsContext.setFill(square.color);
                     graphicsContext.fillRect(square.coordinates.x, square.coordinates.y, boardSettings.getSquareSize(), boardSettings.getSquareSize());
                 }
+                cells1 = cells.subList(0, (cells.size() / 2) - 1);
+                cells2 = cells.subList(cells.size() / 2, cells.size());
+                Thread firstThread = new CellActivitiesThread(cells1, graphicsContext, "first");
+                Thread secondThread = new CellActivitiesThread(cells2, graphicsContext, "second");
+                firstThread.start();
+                secondThread.start();
+                try{
+                    firstThread.join();	//Подождать пока оппонент закончит высказываться.
+                } catch(InterruptedException ignored){}
+                try{
+                    secondThread.join();	//Подождать пока оппонент закончит высказываться.
+                } catch(InterruptedException ignored){}
                 for (Cell cell : cells) {
-                    cellActivities.cellTick(cell, graphicsContext);
+                    graphicsContext.setFill(cell.color);
+                    graphicsContext.fillRect(cell.coordinates.x, cell.coordinates.y, boardSettings.getSquareSize() /*- 1*/, boardSettings.getSquareSize() /*- 1*/);
                 }
+                int iiii = 0;
+//                for (Cell cell : cells) {
+//                    cellActivities.cellTick(cell, graphicsContext);
+//                }
                 for (Square square : squares) { //отрисовка квадратиков
                     if (square.frontGroundColor != null) {
                         graphicsContext.setFill(square.frontGroundColor);
