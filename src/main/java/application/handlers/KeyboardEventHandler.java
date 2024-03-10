@@ -1,6 +1,7 @@
 package application.handlers;
 
 import application.board.BoardActivities;
+import application.json.JsonSaveService;
 import application.keyController.KeyTitles;
 import application.renders.PauseRender;
 import javafx.scene.Scene;
@@ -15,6 +16,7 @@ import static application.Main.*;
 public class KeyboardEventHandler {
 
     private final BoardActivities boardActivities = new BoardActivities();
+    private final JsonSaveService jsonSaveService = new JsonSaveService();
 
     public void handle(Scene scene, KeyTitles keyTitles,
                        GraphicsContext graphicsContext, PauseRender pauseRender) {
@@ -61,6 +63,9 @@ public class KeyboardEventHandler {
                     }
                     if (key.getCode() == KeyCode.DIGIT3) {
                         realFrameCount = 10;
+                    }
+                    if (key.getCode() == KeyCode.DIGIT5) {
+                        jsonSaveService.saveAllObjectsToJson();
                     }
                 }
             });

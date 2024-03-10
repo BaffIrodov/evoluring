@@ -17,7 +17,8 @@ public class KeyTitles {
             new Key("Стрелка вправо", "Добавить еду в определенном участке", KeyCode.RIGHT),
             new Key("Кнопка 1", "Поставить скорость игры х1", KeyCode.DIGIT1),
             new Key("Кнопка 2", "Поставить скорость игры х2", KeyCode.DIGIT2),
-            new Key("Кнопка 3", "Поставить скорость игры х10", KeyCode.DIGIT3)
+            new Key("Кнопка 3", "Поставить скорость игры х10", KeyCode.DIGIT3),
+            new Key("Кнопка 5", "Сохранить состояние игры в json", KeyCode.DIGIT5)
     );
     public Map<KeyCode, Key> mapKeyByKeyCodes;
 
