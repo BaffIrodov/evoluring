@@ -1,13 +1,14 @@
 package application.cell;
 
 import application.Square;
+import application.cellaction.CellActionContext;
 import javafx.scene.canvas.GraphicsContext;
 
 import static application.Main.*;
 
 public class CellActivities {
 
-    public void cellTick(Cell cell, GraphicsContext graphicsContext) {
+    public void cellTick(Cell cell, GraphicsContext graphicsContext, CellActionContext cellActionContext) {
         boolean isDeath = cell.checkIfDeath();
         if (!isDeath) {
             Square currentSquare = cell.getCurrentSquare();

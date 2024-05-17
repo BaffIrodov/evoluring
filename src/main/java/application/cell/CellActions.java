@@ -90,14 +90,15 @@ public class CellActions {
     }
 
     public void actionMapGenerate() {
-        actionMap.put("o", CellActions.CellActionsNames.DO_NOTHING);
-        actionMap.put("a", CellActions.CellActionsNames.MOVE_LEFT);
-        actionMap.put("b", CellActions.CellActionsNames.MOVE_UP);
-        actionMap.put("c", CellActions.CellActionsNames.MOVE_RIGHT);
-        actionMap.put("d", CellActions.CellActionsNames.MOVE_DOWN);
-        actionMap.put("e", CellActions.CellActionsNames.EAT_CLOSE_FOOD);
-        actionMap.put("f", CellActions.CellActionsNames.ATTACK);
-        actionMap.put("g", CellActions.CellActionsNames.DEFENCE);
-        actionMap.put("h", CellActions.CellActionsNames.GENERATE_CHILD);
+        actionMap.put("o", CellActionsNames.DO_NOTHING);
+        actionMap.put("a", CellActionsNames.MOVE_LEFT);
+        actionMap.put("b", CellActionsNames.MOVE_UP);
+        actionMap.put("c", CellActionsNames.MOVE_RIGHT);
+        actionMap.put("d", CellActionsNames.MOVE_DOWN);
+        actionMap.put("e", CellActionsNames.EAT_CLOSE_FOOD);
+        actionMap.put("f", CellActionsNames.ATTACK);
+        actionMap.put("g", CellActionsNames.DEFENCE);
+        actionMap.put("h", CellActionsNames.GENERATE_CHILD);
+        actionMap.put("t", CellActionsNames.THINK);
     }
 }

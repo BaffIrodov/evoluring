@@ -6,6 +6,8 @@ import application.board.BoardActivities;
 import application.cell.Cell;
 import application.cell.CellActions;
 import application.cell.CellActivities;
+import application.cellaction.CellAction;
+import application.cellaction.CellActionContext;
 import application.frontground.FrontGroundController;
 import application.handlers.KeyboardEventHandler;
 import application.handlers.MouseEventHandler;
@@ -62,6 +64,7 @@ public class Main extends Application {
             VBox root = new VBox();
             Canvas c = new Canvas(boardSettings.getWidth() * boardSettings.getSquareSize(), boardSettings.getHeight() * boardSettings.getSquareSize());
             GraphicsContext graphicsContext = c.getGraphicsContext2D();
+            CellActionContext cellActionContext = new CellActionContext();
             root.getChildren().add(c);
 
             new AnimationTimer() {
@@ -70,13 +73,13 @@ public class Main extends Application {
                 public void handle(long now) {
                     if (lastTick == 0) {
                         lastTick = now;
-                        tick(graphicsContext);
+                        tick(graphicsContext, cellActionContext);
                         return;
                     }
 
                     if (now - lastTick > 0) {
                         lastTick = now;
-                        tick(graphicsContext);
+                        tick(graphicsContext, cellActionContext);
                     }
                 }
 
@@ -100,7 +103,7 @@ public class Main extends Application {
     }
 
     // tick
-    public void tick(GraphicsContext graphicsContext) {
+    public void tick(GraphicsContext graphicsContext, CellActionContext cellActionContext) {
         if (currentTick == 1100) {
             System.out.println("------- 1100 frames done ------");
         }
@@ -136,7 +139,7 @@ public class Main extends Application {
                     graphicsContext.fillRect(square.coordinates.x, square.coordinates.y, boardSettings.getSquareSize(), boardSettings.getSquareSize());
                 }
                 for (Cell cell : cells) {
-                    cellActivities.cellTick(cell, graphicsContext);
+                    cellActivities.cellTick(cell, graphicsContext, cellActionContext);
                 }
                 for (Square square : squares) { //отрисовка квадратиков
                     if (square.frontGroundColor != null) {
