@@ -5,7 +5,7 @@ public class GameSettings {
     public BoardSettings boardSettings;
     public EnergyCostSettings energyCostSettings;
     public FoodAddingSettings foodAddingSettings;
-    public CellGenerationSettings cellGenerationSettings;
+    public CellReplicationSettings cellReplicationSettings;
     public RenderSettings renderSettings;
     public ApplicationSettings applicationSettings;
 
@@ -13,7 +13,7 @@ public class GameSettings {
         this.boardSettings = new BoardSettings();
         this.energyCostSettings = new EnergyCostSettings();
         this.foodAddingSettings = new FoodAddingSettings();
-        this.cellGenerationSettings = new CellGenerationSettings();
+        this.cellReplicationSettings = new CellReplicationSettings();
         this.renderSettings = new RenderSettings();
         this.applicationSettings = new ApplicationSettings();
     }

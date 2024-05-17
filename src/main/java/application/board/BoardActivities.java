@@ -3,7 +3,7 @@ package application.board;
 import application.Square;
 import application.cell.Cell;
 import application.Coordinates;
-import application.DNA;
+import application.cell.DNA;
 import javafx.scene.paint.Color;
 
 import static application.Main.*;
@@ -31,10 +31,10 @@ public class BoardActivities {
     }
 
     public void cellAdding() {
-        cells.add(new Cell("red", 1, 500, new Coordinates(150, 150), new DNA("ah", 0), Color.RED));
-        cells.add(new Cell("black", 1, 500, new Coordinates(450, 150), new DNA("bh", 0), Color.BLACK));
-        cells.add(new Cell("green", 1, 500, new Coordinates(150, 450), new DNA("ch", 0), Color.GREEN));
-        cells.add(new Cell("blue", 1, 500, new Coordinates(450, 450), new DNA("dh", 0), Color.BLUE));
+        cells.add(new Cell("red", 1, 500, new Coordinates(225, 150), new DNA(), Color.RED));
+        cells.add(new Cell("black", 1, 500, new Coordinates(675, 150), new DNA(), Color.BLACK));
+        cells.add(new Cell("green", 1, 500, new Coordinates(225, 450), new DNA(), Color.GREEN));
+        cells.add(new Cell("blue", 1, 500, new Coordinates(675, 450), new DNA(), Color.BLUE));
     }
 
     public void addFreeFoodInDistrict() {

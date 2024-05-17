@@ -23,14 +23,8 @@ public class CellActions {
         THINK // принять решение, куда двигаться
     }
 
-    public Cell onGenerateChild(Cell cell) {
-        return cell.generateChild(boardSettings.getSquareSize());
-    }
-
-    public void onDoNothing(Cell cell) {
-        if (energyCostSettings.isConsiderActiveCost) {
-            cell.energy -= energyCostSettings.doNothingActiveCost;
-        }
+    public Cell onReplicate(Cell cell) {
+        return cell.replicate(boardSettings.getSquareSize());
     }
 
     public void onMoveLeft(Cell cell) {
@@ -65,15 +59,6 @@ public class CellActions {
         teleportCell(cell);
     }
 
-    public void onEatCloseFood(Cell cell, Square square) {
-        cell.energy += square.closeFood;
-        if (energyCostSettings.isConsiderActiveCost) {
-            cell.energy -= energyCostSettings.eatCloseFoodActive;
-        }
-        square.closeFood = 0;
-        square.calculateColor(true);
-    }
-
     public void teleportCell(Cell cell) {
         if (cell.coordinates.x < 0) {
             cell.coordinates.x = (boardSettings.getWidth() - 1) * boardSettings.getSquareSize();
@@ -89,7 +74,7 @@ public class CellActions {
         }
     }
 
-    public void actionMapGenerate() {
+    public void generateActionMap() {
         actionMap.put("o", CellActionsNames.DO_NOTHING);
         actionMap.put("a", CellActionsNames.MOVE_LEFT);
         actionMap.put("b", CellActionsNames.MOVE_UP);

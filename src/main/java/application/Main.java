@@ -6,7 +6,6 @@ import application.board.BoardActivities;
 import application.cell.Cell;
 import application.cell.CellActions;
 import application.cell.CellActivities;
-import application.cellaction.CellAction;
 import application.cellaction.CellActionContext;
 import application.frontground.FrontGroundController;
 import application.handlers.KeyboardEventHandler;
@@ -28,7 +27,7 @@ public class Main extends Application {
     public static BoardSettings boardSettings = gameSettings.boardSettings;
     public static EnergyCostSettings energyCostSettings = gameSettings.energyCostSettings;
     public static FoodAddingSettings foodAddingSettings = gameSettings.foodAddingSettings;
-    public static CellGenerationSettings cellGenerationSettings = gameSettings.cellGenerationSettings;
+    public static CellReplicationSettings cellReplicationSettings = gameSettings.cellReplicationSettings;
     public static RenderSettings renderSettings = gameSettings.renderSettings;
     public static ApplicationSettings applicationSettings = gameSettings.applicationSettings;
     FrontGroundController frontGroundController = new FrontGroundController();
@@ -92,7 +91,7 @@ public class Main extends Application {
             keyboardEventHandler.handle(scene, keyTitles, graphicsContext, pauseRender);
             // initialization playing field
             squareAdding();
-            cellActions.actionMapGenerate();
+            cellActions.generateActionMap();
 
             primaryStage.setScene(scene);
             primaryStage.setTitle("EVOLURING");
