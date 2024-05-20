@@ -64,19 +64,19 @@ public class Square {
             this.freeFood = 0;
         }
         if (this.items.size() > 1) {
-            Map<String, Integer> attackPlusDefenceByCellName = new HashMap<>();
+            Map<String, Integer> attackPlusDefencePlusEnergyByCellName = new HashMap<>();
             Map<String, Integer> energyByCellName = new HashMap<>();
             Map<String, Integer> cellCountByCellName = new HashMap<>();
             this.items.forEach(item -> {
                 Cell cell = (Cell) item;
-                attackPlusDefenceByCellName.merge(cell.name, cell.attack + cell.defence, Integer::sum);
+                attackPlusDefencePlusEnergyByCellName.merge(cell.name, cell.attack + cell.defence + cell.energy, Integer::sum);
                 energyByCellName.merge(cell.name, cell.energy, Integer::sum);
                 cellCountByCellName.merge(cell.name, 1, Integer::sum);
             });
-            if (attackPlusDefenceByCellName.size() > 1) {
+            if (attackPlusDefencePlusEnergyByCellName.size() > 1) {
                 AtomicReference<String> nameOfStrongerCell = new AtomicReference<>("");
                 final Integer[] maxStrongOfCell = {-1};
-                attackPlusDefenceByCellName.forEach((k, v) -> {
+                attackPlusDefencePlusEnergyByCellName.forEach((k, v) -> {
                     if (maxStrongOfCell[0] < v) {
                         maxStrongOfCell[0] = v;
                         nameOfStrongerCell.set(k);
