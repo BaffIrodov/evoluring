@@ -27,7 +27,7 @@ public class DNA {
     public DNA(DNA parentCellDNA, int generationNumber) {
         //todo пока затычка, изменить
         int countOfGenesToAdding = rand.nextInt(1, 4);
-        int countOfGenesToDeleting = rand.nextInt(0, countOfGenesToAdding);
+        int countOfGenesToDeleting = rand.nextInt(0, countOfGenesToAdding+1);
         int maxDnaSize = 50;
 
         if (parentCellDNA.dnaSections.size() > 0) {
